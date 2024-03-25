@@ -7,7 +7,7 @@ module.exports = {
         "eslint:recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:react/recommended",
-        "plugin:prettier/recommended", // Dodajemy Prettier na końcu
+        "plugin:prettier/recommended",
     ],
     overrides: [
         {
@@ -30,10 +30,13 @@ module.exports = {
     plugins: [
         "@typescript-eslint",
         "react",
-        "prettier", // Dodajemy plugin Prettier
+        "prettier",
     ],
     rules: {
-        "prettier/prettier": "warn", // Włączamy reguły Prettiera jako błędy
-        // Możesz tutaj dodać lub nadpisać inne reguły ESLint
+        "prettier/prettier": "warn",
+        "quotes": ["error", "single"],
+        "no-console": "off",
+        "react/jsx-uses-react": "off",
+        "react/react-in-jsx-scope": "off"
     },
 };
