@@ -8,8 +8,7 @@ export const Navbar = () => {
                     <Link to="/">Home</Link>
                 </li>
                 <li>
-                    {/* eslint-disable-next-line react/react-in-jsx-scope */}
-                    <Link to="/app">App</Link>
+                    <Link to="/auth">App</Link>
                 </li>
             </ul>
         </nav>

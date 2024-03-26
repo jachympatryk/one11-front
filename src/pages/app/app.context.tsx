@@ -15,6 +15,7 @@ import {
     fetchUserFunctionary,
     fetchUserPlayers,
 } from '../../server/user/user.server.ts';
+import { useNavigate } from 'react-router-dom';
 
 interface UserContextType {
     userFunctionaries: { userFunctionary: FunctionaryModel }[];
@@ -28,6 +29,8 @@ const AppContext = createContext<UserContextType | undefined>(undefined);
 export const AppProvider: FunctionComponent<{ children: ReactNode }> = ({
     children,
 }) => {
+    const navigate = useNavigate();
+
     const [userAuthId, setUserAuthId] = useState<string | null>(null);
     const [userSelectedFunctionality, setUserSelectedFunctionality] = useState<
         FunctionaryModel | PlayerModel | null
@@ -75,9 +78,15 @@ export const AppProvider: FunctionComponent<{ children: ReactNode }> = ({
         if (storedData) {
             const parsedData = JSON.parse(storedData);
             const userId = parsedData?.user?.id;
-            setUserAuthId(userId);
+            if (userId) {
+                setUserAuthId(userId);
+            } else {
+                navigate('/auth');
+            }
+        } else {
+            navigate('/auth');
         }
-    }, []);
+    }, [history]);
 
     return (
         <AppContext.Provider
@@ -101,7 +110,7 @@ export const useApp = () => {
     return context;
 };
 
-export const AppWrapper: FunctionComponent<{ children: ReactNode }> = ({}) => {
+export const AppWrapper: FunctionComponent = () => {
     return (
         <AppProvider>
             <AppPage />

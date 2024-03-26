@@ -1,4 +1,5 @@
-import { useApp } from '../app.context.tsx';
+import { useApp } from '../../app.context.tsx';
+import styles from './user-functionality-select.module.scss';
 
 export const UserFunctionalitySelect = () => {
     const { userPlayers, userFunctionaries, userSelectedFunctionality } =
@@ -7,7 +8,7 @@ export const UserFunctionalitySelect = () => {
     console.log(userPlayers, userFunctionaries);
 
     return (
-        <div>
+        <div className={styles.wrapper}>
             {userPlayers?.map(({ player }) => (
                 <div key={player.id}>{player.name} - p</div>
             ))}
