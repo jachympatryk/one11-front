@@ -1,6 +1,32 @@
 import { fetchFromBackend } from '../server.ts';
 import { FunctionaryModel as Functionary } from '../../models/functionary.ts';
 
+interface UserResponse {
+    id: number;
+    auth_id: string;
+    email: string;
+    name?: string;
+    surname?: string;
+}
+
+export const fetchUserByAuthId = async (authId: string) => {
+    return await fetchFromBackend<UserResponse>(`users/by-auth-id/${authId}`);
+};
+
+interface SyncUserPayload extends Record<string, unknown> {
+    auth_id: string;
+    email: string;
+    name?: string;
+    surname?: string;
+}
+
+export const syncUserWithBackend = async (payload: SyncUserPayload) => {
+    return await fetchFromBackend<any>('users/sync', {
+        method: 'POST',
+        body: payload,
+    });
+};
+
 interface UserFunctionaryResponse {
     userId: number;
     functionaryId: number;
