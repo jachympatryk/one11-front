@@ -18,4 +18,5 @@ export interface PlayerModel {
     team?: Team;
     clubId?: number;
     club?: Club;
+    position: 'GOALKEEPER' | 'DEFENDER' | 'MIDFIELDER' | 'STRIKER';
 }

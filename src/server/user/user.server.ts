@@ -1,5 +1,6 @@
 import { fetchFromBackend } from '../server.ts';
 import { FunctionaryModel as Functionary } from '../../models/functionary.ts';
+import { PlayerModel } from '../../models/player.ts';
 
 interface UserResponse {
     id: number;
@@ -42,7 +43,8 @@ export const fetchUserFunctionary = async (userId: number) => {
 interface UserPlayerResponse {
     userId: number;
     playerId: number;
-    functionary: Functionary;
+    functionary?: Functionary;
+    player?: PlayerModel;
 }
 
 export const fetchUserPlayers = async (userId: number) => {

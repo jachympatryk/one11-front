@@ -1,10 +1,11 @@
-import {
+import React, {
     createContext,
     useContext,
     ReactNode,
     FunctionComponent,
     useState,
     useEffect,
+    useMemo,
 } from 'react';
 import { PlayerModel } from '../../models/player';
 import { FunctionaryModel } from '../../models/functionary';
@@ -16,12 +17,18 @@ import {
     fetchUserPlayers,
 } from '../../server/user/user.server.ts';
 import { useNavigate } from 'react-router-dom';
+import { DetailsProvider } from './details.context.tsx';
 
 interface UserContextType {
     userFunctionaries: { userFunctionary: FunctionaryModel }[];
     userPlayers: { userPlayer: PlayerModel }[];
     userSelectedFunctionality: FunctionaryModel | PlayerModel | null;
     isDataLoading: boolean;
+    isDataFetched: boolean;
+    setUserSelectedFunctionality: React.Dispatch<
+        React.SetStateAction<FunctionaryModel | PlayerModel | null>
+    >;
+    isUserPlayer: boolean;
 }
 
 const AppContext = createContext<UserContextType | undefined>(undefined);
@@ -35,6 +42,13 @@ export const AppProvider: FunctionComponent<{ children: ReactNode }> = ({
     const [userSelectedFunctionality, setUserSelectedFunctionality] = useState<
         FunctionaryModel | PlayerModel | null
     >(null);
+    const [isUserPlayer, setIsUserPlayer] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (userSelectedFunctionality) {
+            setIsUserPlayer('position' in userSelectedFunctionality);
+        }
+    }, [userSelectedFunctionality]);
 
     const { data } = useQuery(
         ['user', userAuthId],
@@ -44,19 +58,27 @@ export const AppProvider: FunctionComponent<{ children: ReactNode }> = ({
 
     const userId = data?.id;
 
-    const { data: userFunctionaries, isLoading: userFunctionariesLoading } =
-        useQuery(
-            ['functionaries', userId],
-            () => fetchUserFunctionary(userId as number),
-            { enabled: !!userId }
-        );
-    const { data: userPlayers, isLoading: userPlayersLoading } = useQuery(
+    const {
+        data: userFunctionaries,
+        isSuccess: isSuccessFunctionaries,
+        isLoading: userFunctionariesLoading,
+    } = useQuery(
+        ['functionaries', userId],
+        () => fetchUserFunctionary(userId as number),
+        { enabled: !!userId }
+    );
+    const {
+        data: userPlayers,
+        isSuccess: isSuccessPlayers,
+        isLoading: userPlayersLoading,
+    } = useQuery(
         ['players', userId],
         () => fetchUserPlayers(userId as number),
         { enabled: !!userId }
     );
 
     const isDataLoading = userFunctionariesLoading || userPlayersLoading;
+    const isDataFetched = isSuccessFunctionaries && isSuccessPlayers;
 
     useEffect(() => {
         if (!isDataLoading) {
@@ -86,20 +108,28 @@ export const AppProvider: FunctionComponent<{ children: ReactNode }> = ({
         } else {
             navigate('/auth');
         }
-    }, [history]);
+    }, [navigate]);
 
-    return (
-        <AppContext.Provider
-            value={{
-                userFunctionaries: userFunctionaries ? userFunctionaries : [],
-                userPlayers: userPlayers ? userPlayers : [],
-                userSelectedFunctionality,
-                isDataLoading,
-            }}
-        >
-            {children}
-        </AppContext.Provider>
+    const value = useMemo(
+        () => ({
+            userFunctionaries,
+            userPlayers,
+            userSelectedFunctionality,
+            isDataLoading,
+            isDataFetched,
+            isUserPlayer,
+            setUserSelectedFunctionality,
+        }),
+        [
+            userFunctionaries,
+            userPlayers,
+            userSelectedFunctionality,
+            isDataLoading,
+            isDataFetched,
+        ]
     );
+
+    return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
 
 export const useApp = () => {
@@ -113,7 +143,9 @@ export const useApp = () => {
 export const AppWrapper: FunctionComponent = () => {
     return (
         <AppProvider>
-            <AppPage />
+            <DetailsProvider>
+                <AppPage />
+            </DetailsProvider>
         </AppProvider>
     );
 };

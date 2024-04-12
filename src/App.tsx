@@ -5,6 +5,9 @@ import { PageRoute } from './components/page/page-route.tsx';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { AuthPage } from './pages/auth/auth.page.tsx';
 import { AppWrapper } from './pages/app/app.context.tsx';
+import { Dashboard } from './pages/app/pages/dashboard/dashboard.tsx';
+import { Calendar } from './pages/app/pages/calendar/calendar.tsx';
+import { Players } from './pages/app/pages/players/players.tsx';
 
 const queryClient = new QueryClient();
 
@@ -17,10 +20,11 @@ function App() {
                         path="/"
                         element={<PageRoute element={<LandingPage />} />}
                     />
-                    <Route
-                        path="/app"
-                        element={<PageRoute element={<AppWrapper />} />}
-                    />
+                    <Route path="/app" element={<AppWrapper />}>
+                        <Route path="dashboard" element={<Dashboard />} />
+                        <Route path="calendar" element={<Calendar />} />
+                        <Route path="players" element={<Players />} />
+                    </Route>
                     <Route
                         path="/auth"
                         element={<PageRoute element={<AuthPage />} />}

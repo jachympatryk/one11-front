@@ -6,3 +6,29 @@
   min-height: 100vh;
   height: 100%;
 }
+
+/* Stylizacja scrollbara dla przeglądarek opartych na WebKit (Chrome, Safari, nowsze wersje Edge) */
+::-webkit-scrollbar {
+  width: 8px; /* Szerokość paska przewijania */
+}
+
+::-webkit-scrollbar-track {
+  background: #2e2e2e; /* Kolor tła toru przewijania */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #555; /* Kolor kciuka przewijania */
+  border-radius: 4px; /* Zaokrąglenie kciuka przewijania */
+  border: 2px solid #2e2e2e; /* Granica kciuka przewijania, dopasowana do tła toru */
+}
+
+/* Stylizacja scrollbara dla Firefox */
+* {
+  scrollbar-width: thin; /* "auto" lub "thin" */
+  scrollbar-color: #555 #2e2e2e; /* kolor kciuka i toru */
+}
+
+/* Stylizacja scrollbara dla IE oraz Edge */
+body {
+  -ms-overflow-style: -ms-autohiding-scrollbar; /* Auto-ukrywanie paska przewijania w IE/Edge */
+}

@@ -34,3 +34,28 @@ h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
+
+p {
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+*[datatype="TRAINING"] {
+  background-color: #de8639;
+}
+
+*[datatype="MATCH"] {
+  background-color: #029835;
+}
+
+*[datatype="MEETING"] {
+  background-color: #4253AC;
+}
+
+*[datatype="OTHER"] {
+  background-color: #717171;
+}
