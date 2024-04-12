@@ -17,10 +17,13 @@ import { DayCell } from '../day-cell/day-cell.tsx';
 import { useDetails } from '../../details.context.tsx';
 import { MdNavigateNext, MdNavigateBefore } from 'react-icons/md';
 import { monthNames } from '../../../../constants/data.ts';
+import { ModalComponent } from '../../../../components/modal/modal.tsx';
 
 export const Calendar: React.FC = () => {
     const { events } = useDetails();
+    const { userIsPlayer } = useDetails();
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const today = new Date();
 
@@ -50,12 +53,27 @@ export const Calendar: React.FC = () => {
 
     return (
         <div className={styles.container}>
+            <ModalComponent
+                isOpen={isModalOpen}
+                onClose={() => {
+                    setIsModalOpen(false);
+                }}
+            >
+                <p>To jest treść modalu</p>
+            </ModalComponent>
+
+            <button
+                onClick={() => {
+                    setIsModalOpen(true);
+                }}
+            >
+                dodaj nowe
+            </button>
             <div className={styles.calendarHeader}>
                 <button className={styles.button} onClick={previousMonth}>
                     <MdNavigateBefore />
                 </button>
                 <div>{`${monthName} ${year}`}</div>{' '}
-                {/* Użycie zmiennej monthName */}
                 <button className={styles.button} onClick={nextMonth}>
                     <MdNavigateNext />
                 </button>

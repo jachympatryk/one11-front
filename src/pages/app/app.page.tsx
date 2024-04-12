@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { SideMenu } from './components/side-menu/side-menu.tsx';
 import { UserFunctionalitySelect } from './components/user-functionality-select/user-functionality-select.tsx';
 import styles from './app.module.scss';
@@ -8,12 +8,18 @@ import { Calendar } from './pages/calendar/calendar.tsx';
 import useIsMobile from '../../hooks/useIsMobile.tsx';
 import { useApp } from './app.context.tsx';
 import { Players } from './pages/players/players.tsx';
+import { useEffect } from 'react';
 
 export const AppPage = () => {
+    const navigate = useNavigate();
     const isMobile = useIsMobile();
 
     const { userSelectedFunctionality, isDataLoading, isDataFetched } =
         useApp();
+
+    // useEffect(() => {
+    //     navigate('/app/dashboard');
+    // }, [userSelectedFunctionality]);
 
     if (isDataLoading) return <div>loading</div>;
 
