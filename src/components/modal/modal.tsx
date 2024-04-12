@@ -13,7 +13,7 @@ export const ModalComponent: React.FC<ModalProps> = ({
     onClose,
     children,
 }) => {
-    const [showModal, setShowModal] = useState(false);
+    const [showModal, setShowModal] = useState(isOpen);
     const [shouldRender, setShouldRender] = useState(isOpen);
 
     useEffect(() => {
@@ -35,13 +35,17 @@ export const ModalComponent: React.FC<ModalProps> = ({
     }, [showModal]);
 
     const handleOverlayClick = () => {
-        setShowModal(false);
+        onClose(); // Use onClose to handle state change in parent
     };
 
     const handleContentClick = (
         event: React.MouseEvent<HTMLDivElement, MouseEvent>
     ) => {
         event.stopPropagation(); // Prevent the modal from closing when its content is clicked
+    };
+
+    const handleButtonClick = () => {
+        setShowModal(false); // Start closing animation
     };
 
     const onAnimationEnd = () => {
@@ -64,7 +68,7 @@ export const ModalComponent: React.FC<ModalProps> = ({
                       {children}
                       <button
                           className={styles.closeButton}
-                          onClick={() => setShowModal(false)}
+                          onClick={handleButtonClick}
                       >
                           Zamknij
                       </button>
