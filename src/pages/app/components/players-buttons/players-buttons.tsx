@@ -1,6 +1,5 @@
 import styles from './players-buttons.module.scss';
 import { useDetails } from '../../details.context.tsx';
-import { PlayerPosition } from '../../../../models/player.ts';
 
 export const PlayersButtons = () => {
   const { players, playersFiltered, setPlayersFiltered } = useDetails();

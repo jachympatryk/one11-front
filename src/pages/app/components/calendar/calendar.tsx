@@ -1,15 +1,12 @@
 import React, { useState } from 'react';
 import {
-  format,
   startOfMonth,
   endOfMonth,
   startOfWeek,
   endOfWeek,
   eachDayOfInterval,
   addMonths,
-  isToday,
   isSameDay,
-  parseISO,
 } from 'date-fns';
 
 import styles from './calendar.module.scss';
@@ -21,11 +18,9 @@ import { ModalComponent } from '../../../../components/modal/modal.tsx';
 
 export const Calendar: React.FC = () => {
   const { events } = useDetails();
-  const { userIsPlayer } = useDetails();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const today = new Date();
 
   const startDay = startOfWeek(startOfMonth(currentMonth), {
     weekStartsOn: 1,
