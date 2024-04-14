@@ -62,13 +62,13 @@ export const Calendar: React.FC = () => {
                 <p>To jest treść modalu</p>
             </ModalComponent>
 
-            <button
-                onClick={() => {
-                    setIsModalOpen(true);
-                }}
-            >
-                dodaj nowe
-            </button>
+            {/*<button*/}
+            {/*    onClick={() => {*/}
+            {/*        setIsModalOpen(true);*/}
+            {/*    }}*/}
+            {/*>*/}
+            {/*    dodaj nowe*/}
+            {/*</button>*/}
             <div className={styles.calendarHeader}>
                 <button className={styles.button} onClick={previousMonth}>
                     <MdNavigateBefore />

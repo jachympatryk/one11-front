@@ -22,6 +22,7 @@ interface DetailsContextType {
         >
     >;
     userIsPlayer: boolean;
+    tableData: [];
 }
 
 const DetailsContext = createContext<DetailsContextType | undefined>(undefined);
@@ -36,6 +37,7 @@ export const DetailsProvider: React.FC<{ children: React.ReactNode }> = ({
     const [playersFiltered, setPlayersFiltered] = useState<
         'GOALKEEPER' | 'DEFENDER' | 'MIDFIELDER' | 'STRIKER' | ''
     >('');
+    const [tableData, setTableData] = useState([]);
 
     const { data: teamDetails, isLoading: eventsLoading } = useQuery(
         ['teams', userSelectedFunctionality?.teamId],
@@ -43,10 +45,13 @@ export const DetailsProvider: React.FC<{ children: React.ReactNode }> = ({
         { enabled: !!userSelectedFunctionality?.teamId }
     );
 
+    console.log(teamDetails);
+
     useEffect(() => {
         if (teamDetails) {
             setEvents(teamDetails.events);
             setPlayers(teamDetails.players);
+            setTableData(teamDetails.table);
         }
     }, [teamDetails]);
 
@@ -61,6 +66,7 @@ export const DetailsProvider: React.FC<{ children: React.ReactNode }> = ({
             players,
             playersFiltered,
             setPlayersFiltered,
+            tableData,
         }),
         [userSelectedFunctionality, events, players, playersFiltered]
     );
