@@ -14,9 +14,7 @@ module.exports = {
             env: {
                 node: true,
             },
-            files: [
-                ".eslintrc.{js,cjs}",
-            ],
+            files: [".eslintrc.{js,cjs}"],
             parserOptions: {
                 sourceType: "script",
             },
@@ -24,7 +22,10 @@ module.exports = {
     ],
     parser: "@typescript-eslint/parser",
     parserOptions: {
-        ecmaVersion: "latest",
+        ecmaFeatures: {
+            jsx: true,
+        },
+        ecmaVersion: 2021,
         sourceType: "module",
     },
     plugins: [
@@ -33,10 +34,20 @@ module.exports = {
         "prettier",
     ],
     rules: {
-        "prettier/prettier": "warn",
+        "prettier/prettier": ["warn", {
+            "singleQuote": true,
+            "semi": false,
+            "useTabs": false,
+            "tabWidth": 2,
+            "trailingComma": "es5",
+            "printWidth": 80
+        }],
         "quotes": ["error", "single"],
         "no-console": "off",
         "react/jsx-uses-react": "off",
-        "react/react-in-jsx-scope": "off"
+        "react/react-in-jsx-scope": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }]
     },
 };
+
