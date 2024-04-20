@@ -12,24 +12,32 @@
 
 .modalContent {
   padding: 20px;
-  background: white;
+  background: #1F1F20;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   position: relative;
   z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   max-width: 500px;
   width: 90%;
   transform: translateY(-50px);
 }
 
+.header {
+  display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
 .closeButton {
-  position: absolute;
-  top: 10px;
-  right: 10px;
   background: none;
   border: none;
   font-size: 24px;
   cursor: pointer;
+  color: #fff;
 }
 
 .fadeIn {

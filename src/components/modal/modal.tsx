@@ -65,10 +65,16 @@ export const ModalComponent: React.FC<ModalProps> = ({
             className={`${styles.modalContent} ${showModal ? styles.slideIn : styles.slideOut}`}
             onClick={handleContentClick}
           >
-            {children}
-            <button className={styles.closeButton} onClick={handleButtonClick}>
-              Zamknij
-            </button>
+            <div className={styles.header}>
+              <p>Modal title</p>
+              <button
+                className={styles.closeButton}
+                onClick={handleButtonClick}
+              >
+                X
+              </button>
+            </div>
+            <div>{children}</div>
           </div>
         </div>,
         document.getElementById('modal-root') as HTMLElement

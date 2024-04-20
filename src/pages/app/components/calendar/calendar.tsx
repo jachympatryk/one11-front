@@ -15,6 +15,7 @@ import { useDetails } from '../../details.context.tsx';
 import { MdNavigateNext, MdNavigateBefore } from 'react-icons/md';
 import { monthNames } from '../../../../constants/data.ts';
 import { ModalComponent } from '../../../../components/modal/modal.tsx';
+import { AddEvent } from '../../form/add-event/add-event.tsx';
 
 export const Calendar: React.FC = () => {
   const { events } = useDetails();
@@ -40,8 +41,6 @@ export const Calendar: React.FC = () => {
     return events.filter((event) => isSameDay(new Date(event.start_time), day));
   };
 
-  // Zmiana formatowania miesiąca
-  // Zmiana formatowania miesiąca
   const monthName =
     monthNames[(currentMonth.getMonth() + 1) as keyof typeof monthNames];
   const year = currentMonth.getFullYear();
@@ -54,16 +53,17 @@ export const Calendar: React.FC = () => {
           setIsModalOpen(false);
         }}
       >
-        <p>To jest treść modalu</p>
+        <AddEvent closeModal={() => setIsModalOpen(false)} />
       </ModalComponent>
 
-      {/*<button*/}
-      {/*    onClick={() => {*/}
-      {/*        setIsModalOpen(true);*/}
-      {/*    }}*/}
-      {/*>*/}
-      {/*    dodaj nowe*/}
-      {/*</button>*/}
+      <button
+        onClick={() => {
+          setIsModalOpen(true);
+        }}
+      >
+        dodaj nowe
+      </button>
+
       <div className={styles.calendarHeader}>
         <button className={styles.button} onClick={previousMonth}>
           <MdNavigateBefore />

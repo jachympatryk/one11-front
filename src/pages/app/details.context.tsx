@@ -40,17 +40,20 @@ export const DetailsProvider: React.FC<{ children: React.ReactNode }> = ({
   );
   const [userIsPlayer, setUserIsPlayer] = useState<boolean>(false);
 
-  const { data: teamDetails, isLoading: isTeamDetailsLoading } =
-    useQuery<TeamDetailsResponse | null>(
-      ['teams', userSelectedFunctionality?.teamId],
-      () =>
-        userSelectedFunctionality?.teamId
-          ? getTeamDetails(userSelectedFunctionality?.teamId)
-          : null,
-      {
-        enabled: !!userSelectedFunctionality?.teamId,
-      }
-    );
+  const {
+    data: teamDetails,
+    isLoading: isTeamDetailsLoading,
+    refetch: refetchTeamDetails,
+  } = useQuery<TeamDetailsResponse | null>(
+    ['teams', userSelectedFunctionality?.teamId],
+    () =>
+      userSelectedFunctionality?.teamId
+        ? getTeamDetails(userSelectedFunctionality?.teamId)
+        : null,
+    {
+      enabled: !!userSelectedFunctionality?.teamId,
+    }
+  );
 
   useEffect(() => {
     if (teamDetails) {
@@ -84,6 +87,7 @@ export const DetailsProvider: React.FC<{ children: React.ReactNode }> = ({
       tableData,
       userIsPlayer,
       isTeamDetailsLoading,
+      refetchTeamDetails,
     }),
     [
       userSelectedFunctionality,
