@@ -1,11 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 :root {
-  font-family: 'Montserrat' ,Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Montserrat', Inter, system-ui, Avenir, Helvetica, Arial,
+    sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  color: #DBDBDB;
+  color: #dbdbdb;
   background-color: #242424;
 
   font-synthesis: none;
@@ -44,18 +45,18 @@ p {
   box-sizing: border-box;
 }
 
-*[datatype="TRAINING"] {
+*[datatype='TRAINING'] {
   background-color: #de8639;
 }
 
-*[datatype="MATCH"] {
+*[datatype='MATCH'] {
   background-color: #029835;
 }
 
-*[datatype="MEETING"] {
-  background-color: #4253AC;
+*[datatype='MEETING'] {
+  background-color: #4253ac;
 }
 
-*[datatype="OTHER"] {
+*[datatype='OTHER'] {
   background-color: #717171;
 }

@@ -1,5 +1,5 @@
 .container {
-  background-color: #1F1F20;
+  background-color: #1f1f20;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -17,7 +17,8 @@ table {
   border-collapse: collapse;
 }
 
-th, td {
+th,
+td {
   padding: 8px;
   text-align: left;
 }
@@ -28,9 +29,9 @@ tbody tr {
 }
 
 tbody tr:nth-child(even) {
-  background-color: #1F1F20;
+  background-color: #1f1f20;
 }
 
 tbody tr:nth-child(odd) {
-  background-color: #28282A;
+  background-color: #28282a;
 }

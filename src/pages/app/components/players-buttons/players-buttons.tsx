@@ -1,18 +1,28 @@
-import styles from './players-buttons.module.scss';
 import { useDetails } from '../../details.context.tsx';
+import styles from './players-buttons.module.scss';
+
+type PlayerPosition = 'GOALKEEPER' | 'DEFENDER' | 'MIDFIELDER' | 'STRIKER';
+
+interface PositionOption {
+  id: PlayerPosition | '';
+  name: string;
+}
 
 export const PlayersButtons = () => {
-  const { players, playersFiltered, setPlayersFiltered } = useDetails();
+  const { players, playersFiltered, setPlayersFiltered, userIsPlayer } =
+    useDetails();
 
-  const isActive = (filter: string) =>
+  const isActive = (filter: PlayerPosition | '') =>
     playersFiltered === filter ? styles.activeButton : '';
 
-  const hasPlayers = (position: number) =>
-    players.some((player) => player.position === position);
+  const hasPlayers = (position: PlayerPosition | '') =>
+    position === ''
+      ? true
+      : players.some((player) => player.position === position);
 
   const anyPlayers = players.length > 0;
 
-  const positions = [
+  const positions: PositionOption[] = [
     { id: '', name: 'Wszyscy' },
     { id: 'GOALKEEPER', name: 'Bramkarze' },
     { id: 'DEFENDER', name: 'Obrońcy' },
@@ -28,13 +38,13 @@ export const PlayersButtons = () => {
             key={id}
             onClick={() => setPlayersFiltered(id)}
             className={`${styles.button} ${isActive(id)}`}
-            disabled={!anyPlayers || (id && !hasPlayers(id))}
+            disabled={!anyPlayers || !hasPlayers(id)}
           >
             {name}
           </button>
         ))}
       </div>
-      <div>Admin buttons</div>
+      {!userIsPlayer && <div>Admin buttons</div>}{' '}
     </div>
   );
 };

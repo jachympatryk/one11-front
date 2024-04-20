@@ -98,7 +98,7 @@ export const AppProvider: FunctionComponent<{ children: ReactNode }> = ({
   }, [userFunctionaries, userPlayers, isDataLoading]);
 
   useEffect(() => {
-    const storageKey = 'sb-kdosiyhnmjybkohjncjx-auth-token';
+    const storageKey = 'sb-ycmehlfqsqzknuxtowdl-auth-token';
     const storedData = localStorage.getItem(storageKey);
     if (storedData) {
       const parsedData = JSON.parse(storedData);

@@ -5,12 +5,11 @@ interface Team {
 interface Club {
   id: number;
 }
-export enum PlayerPosition {
-  GOALKEEPER,
-  DEFENDER,
-  MIDFIELDER,
-  STRIKER,
-}
+export type PlayerPosition =
+  | 'GOALKEEPER'
+  | 'DEFENDER'
+  | 'MIDFIELDER'
+  | 'STRIKER';
 
 export interface PlayerModel {
   id: number;

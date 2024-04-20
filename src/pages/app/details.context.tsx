@@ -91,6 +91,7 @@ export const DetailsProvider: React.FC<{ children: React.ReactNode }> = ({
       players,
       playersFiltered,
       isTeamDetailsLoading,
+      userIsPlayer,
     ]
   );
 

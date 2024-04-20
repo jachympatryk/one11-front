@@ -22,6 +22,7 @@ interface SyncUserPayload extends Record<string, unknown> {
 }
 
 export const syncUserWithBackend = async (payload: SyncUserPayload) => {
+  console.log(payload);
   return await fetchFromBackend<never>('users/sync', {
     method: 'POST',
     body: payload,

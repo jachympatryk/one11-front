@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   gap: 32px;
-  background: #1F1F20;
+  background: #1f1f20;
   border-radius: 16px;
   padding: 32px;
   max-width: 1000px;
@@ -36,7 +36,7 @@
   div {
     width: 100%;
     height: 1px;
-    background: #28282A;
+    background: #28282a;
   }
 }
 
@@ -52,7 +52,7 @@
 .player {
   width: 100%;
   text-align: left;
-  background: #28282A;
+  background: #28282a;
   height: 55px;
   border-radius: 8px;
   display: flex;
@@ -63,10 +63,10 @@
 }
 
 .playerNumber {
-    color: #FFFFFF;
-    font-size: 20px;
-    font-weight: bold;
-    background-color: #4253AC;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: bold;
+  background-color: #4253ac;
   width: 40px;
   height: 40px;
   display: flex;

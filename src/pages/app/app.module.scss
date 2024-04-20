@@ -1,20 +1,20 @@
 @import 'src/assets/styles/_variables.scss';
 
 .wrapper {
-  display:grid;
+  display: grid;
   grid-template-rows: 100px 1fr;
   width: 100vw;
   height: 100vh;
 
   @media screen and (min-width: $breakpoint-sm) {
-    display:grid;
+    display: grid;
     grid-template-columns: 100px 1fr;
     grid-auto-rows: 1fr;
   }
 }
 
 .content {
-  background: #28282A;
+  background: #28282a;
   overflow-y: auto;
   width: 100%;
   height: 100%;

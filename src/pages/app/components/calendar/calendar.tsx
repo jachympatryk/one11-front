@@ -36,12 +36,14 @@ export const Calendar: React.FC = () => {
     setCurrentMonth(addMonths(currentMonth, 1));
   };
 
-  const eventsForDay = (day) => {
+  const eventsForDay = (day: Date) => {
     return events.filter((event) => isSameDay(new Date(event.start_time), day));
   };
 
   // Zmiana formatowania miesiąca
-  const monthName = monthNames[currentMonth.getMonth() + 1];
+  // Zmiana formatowania miesiąca
+  const monthName =
+    monthNames[(currentMonth.getMonth() + 1) as keyof typeof monthNames];
   const year = currentMonth.getFullYear();
 
   return (

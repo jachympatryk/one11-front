@@ -12,27 +12,21 @@ import { Players } from './pages/app/pages/players/players.tsx';
 const queryClient = new QueryClient();
 
 function App() {
-    return (
-        <QueryClientProvider client={queryClient}>
-            <BrowserRouter>
-                <Routes>
-                    <Route
-                        path="/"
-                        element={<PageRoute element={<LandingPage />} />}
-                    />
-                    <Route path="/app" element={<AppWrapper />}>
-                        <Route path="dashboard" element={<Dashboard />} />
-                        <Route path="calendar" element={<Calendar />} />
-                        <Route path="players" element={<Players />} />
-                    </Route>
-                    <Route
-                        path="/auth"
-                        element={<PageRoute element={<AuthPage />} />}
-                    />
-                </Routes>
-            </BrowserRouter>
-        </QueryClientProvider>
-    );
+  return (
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<PageRoute element={<LandingPage />} />} />
+          <Route path="/app" element={<AppWrapper />}>
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="calendar" element={<Calendar />} />
+            <Route path="players" element={<Players />} />
+          </Route>
+          <Route path="/auth" element={<PageRoute element={<AuthPage />} />} />
+        </Routes>
+      </BrowserRouter>
+    </QueryClientProvider>
+  );
 }
 
 export default App;
