@@ -1,4 +1,3 @@
-import React from 'react';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { useMutation } from 'react-query';
@@ -33,7 +32,8 @@ export const AddEvent = ({ closeModal }) => {
     error,
   } = useMutation(createEvent, {
     onSuccess: (data) => {
-      console.log('Event created successfully:', data);
+      closeModal();
+      refetchTeamDetails();
     },
     onError: (err) => {
       console.error('Error creating event:', err);
@@ -42,7 +42,7 @@ export const AddEvent = ({ closeModal }) => {
 
   return (
     <div>
-      <h1>Dodaj Nowe Wydarzenie</h1>
+      <p>Dodaj Nowe Wydarzenie</p>
       <Formik
         initialValues={{
           name: '',
@@ -56,7 +56,7 @@ export const AddEvent = ({ closeModal }) => {
           own_transport: false,
           description_before: '',
           description_after: '',
-          teamId: userSelectedFunctionality.teamId || 0, // Ustawienie domyślne, jeśli teamId jest nieznane
+          teamId: userSelectedFunctionality?.teamId || 0, // Ustawienie domyślne, jeśli teamId jest nieznane
         }}
         validationSchema={EventSchema}
         onSubmit={async (values, actions) => {
@@ -75,8 +75,6 @@ export const AddEvent = ({ closeModal }) => {
 
           try {
             await createEventMutation(formattedValues);
-            await refetchTeamDetails();
-            closeModal();
             actions.resetForm();
           } catch (error) {
             console.error('Error creating event:', error);
