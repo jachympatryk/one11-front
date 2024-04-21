@@ -3,10 +3,11 @@ import styles from './event-card.module.scss';
 import { format } from 'date-fns';
 import { pl } from 'date-fns/locale';
 import { mapEventName } from '../../../../utils/mapEventName.ts';
+import { Link } from 'react-router-dom';
 
 export const EventCard = ({ event }: { event: EventModel }) => {
   return (
-    <li key={event.id} className={styles.container}>
+    <Link to={`/app/event/${event.id}`} className={styles.container}>
       <div datatype={event.event_type} className={styles.event}>
         <p>{mapEventName(event.event_type)}</p>
       </div>
@@ -14,6 +15,6 @@ export const EventCard = ({ event }: { event: EventModel }) => {
       <div>
         <p>{format(event.start_time, 'yyyy-MM-dd HH:mm', { locale: pl })}</p>
       </div>
-    </li>
+    </Link>
   );
 };

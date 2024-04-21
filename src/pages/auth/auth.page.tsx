@@ -52,6 +52,6 @@ export const AuthPage = () => {
       />
     );
   } else {
-    navigate('/app');
+    navigate('/app/dashboard');
   }
 };

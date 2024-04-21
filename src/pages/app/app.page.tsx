@@ -8,6 +8,7 @@ import { Calendar } from './pages/calendar/calendar.tsx';
 import useIsMobile from '../../hooks/useIsMobile.tsx';
 import { useApp } from './app.context.tsx';
 import { Players } from './pages/players/players.tsx';
+import { Event } from './pages/event/event.tsx';
 
 export const AppPage = () => {
   const isMobile = useIsMobile();
@@ -28,6 +29,7 @@ export const AppPage = () => {
         <Routes>
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="calendar" element={<Calendar />} />
+          <Route path="event/:eventId" element={<Event />} />
           <Route path="players" element={<Players />} />
         </Routes>
       </div>

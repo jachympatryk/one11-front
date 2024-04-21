@@ -31,3 +31,32 @@ export const createEvent = async (
     return null;
   }
 };
+
+export interface EventModel {
+  id: number;
+  name: string;
+  event_type: string;
+  created_by: string;
+  start_time: Date;
+  end_time?: Date;
+  line_up?: string;
+  opponent?: string;
+  collection_time?: Date;
+  own_transport?: boolean;
+  description_before?: string;
+  description_after?: string;
+  teamId: number;
+}
+
+export const getEvent = async (eventId: number): Promise<EventModel | null> => {
+  try {
+    const response = await fetchFromBackend<EventModel>(`events/${eventId}`, {
+      method: 'GET',
+    });
+    console.log('Event retrieved successfully:', response);
+    return response;
+  } catch (error) {
+    console.error('Failed to retrieve event:', error);
+    return null;
+  }
+};

@@ -56,7 +56,7 @@ export const AddEvent = ({ closeModal }) => {
           own_transport: false,
           description_before: '',
           description_after: '',
-          teamId: userSelectedFunctionality?.teamId || 0, // Ustawienie domyślne, jeśli teamId jest nieznane
+          teamId: userSelectedFunctionality?.teamId || 0,
         }}
         validationSchema={EventSchema}
         onSubmit={async (values, actions) => {
