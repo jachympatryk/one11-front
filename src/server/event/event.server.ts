@@ -1,31 +1,20 @@
-import { fetchFromBackend } from '../server.ts'; // Zakładam, że obsługuje również metody POST
-
-export interface EventModel {
-  id?: number;
-  name: string;
-  event_type: string;
-  created_by: string;
-  start_time: Date;
-  end_time?: Date;
-  line_up?: string;
-  opponent?: string;
-  collection_time?: Date;
-  own_transport?: boolean;
-  description_before?: string;
-  description_after?: string;
-  teamId: number;
-}
+import { fetchFromBackend } from '../server.ts';
+import {
+  AttendanceModel,
+  CreateEventModel,
+  EventModel,
+} from '../../models/event.ts';
 
 export const createEvent = async (
-  eventData: EventModel
-): Promise<EventModel | null> => {
+  eventData: CreateEventModel
+): Promise<CreateEventModel | null> => {
   try {
-    const response = await fetchFromBackend<EventModel>('events/', {
+    const response = await fetchFromBackend<CreateEventModel>('events/', {
       method: 'POST',
       body: eventData,
     });
     console.log('Event created successfully:', response);
-    return response;
+    return response; // Zwracamy bezpośrednio obiekt z odpowiedzi
   } catch (error) {
     console.error('Failed to create event:', error);
     return null;
@@ -44,12 +33,6 @@ export const getEvent = async (eventId: number): Promise<EventModel | null> => {
     return null;
   }
 };
-
-export interface AttendanceModel {
-  eventId: number;
-  playerId: number;
-  status: string; // Może być typu enum, jeśli masz zdefiniowane
-}
 
 export const updateAttendance = async (
   eventId: number,

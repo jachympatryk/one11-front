@@ -78,8 +78,6 @@ export const AppProvider: FunctionComponent<{ children: ReactNode }> = ({
     enabled: !!userId,
   });
 
-  console.log('userFunctionaries', userFunctionaries);
-
   const isDataLoading = userFunctionariesLoading || userPlayersLoading;
   const isDataFetched = isSuccessFunctionaries && isSuccessPlayers;
 

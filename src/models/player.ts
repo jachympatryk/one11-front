@@ -1,10 +1,3 @@
-interface Team {
-  id: number;
-}
-
-interface Club {
-  id: number;
-}
 export type PlayerPosition =
   | 'GOALKEEPER'
   | 'DEFENDER'
@@ -20,8 +13,6 @@ export interface PlayerModel {
   active: boolean;
   created_at: Date;
   teamId?: number;
-  team?: Team;
   clubId?: number;
-  club?: Club;
   position: PlayerPosition;
 }

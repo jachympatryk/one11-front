@@ -18,7 +18,7 @@ export async function fetchFromBackend<T = never>(
   const config: RequestInit = {
     method,
     headers: {
-      'Content-Type': 'application/json', // Domyślnie ustawiamy 'Content-Type'
+      'Content-Type': 'application/json',
       ...headers,
     },
   };
@@ -27,27 +27,23 @@ export async function fetchFromBackend<T = never>(
     config.body = JSON.stringify(body);
   }
 
-  try {
-    const response = await fetch(`${baseUrl}/${endpoint}`, config);
+  const response = await fetch(`${baseUrl}/${endpoint}`, config);
 
-    if (!response.ok) {
-      let error: BackendError;
-      try {
-        const errorData: BackendError = await response.json();
-        error = {
-          message: errorData.message,
-          statusCode: response.status,
-        };
-      } catch {
-        error = {
-          message: 'Error fetching data',
-          statusCode: response.status,
-        };
-      }
-      throw error;
+  if (!response.ok) {
+    let error: BackendError;
+    try {
+      const errorData: BackendError = await response.json();
+      error = {
+        message: errorData.message,
+        statusCode: response.status,
+      };
+    } catch {
+      error = {
+        message: 'Error fetching data',
+        statusCode: response.status,
+      };
     }
-    return (await response.json()) as T;
-  } catch (error) {
     throw error;
   }
+  return (await response.json()) as T;
 }

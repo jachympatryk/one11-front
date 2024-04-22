@@ -15,9 +15,19 @@ export interface EventModel {
   teamId: number; // Zakładam, że to jest zawsze wymagane, nie ma znaku zapytania
 }
 
+export type CreateEventModel = Omit<EventModel, 'id'>;
+
 export type EventType =
   | 'TRAINING'
   | 'MATCH'
   | 'TOURNAMENT'
   | 'MEETING'
   | 'OTHER';
+
+export interface AttendanceModel {
+  eventId: number;
+  playerId: number;
+  status: AttendanceStatus;
+}
+
+export type AttendanceStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED';

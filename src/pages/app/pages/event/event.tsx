@@ -5,7 +5,7 @@ import styles from './event.module.scss';
 import { mapEventName } from '../../../../utils/mapEventName.ts';
 import { format } from 'date-fns';
 import { pl } from 'date-fns/locale';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import {
   getEvent,
   updateAttendance,
@@ -17,11 +17,13 @@ export const Event = () => {
   const { userSelectedFunctionality } = useApp();
   const { players, userIsPlayer } = useDetails();
   const { eventId } = useParams();
-  const queryClient = useQueryClient(); // Przeniesione na początek funkcji
+  const queryClient = useQueryClient();
 
-  const [eventData, setEventData] = useState(null); // Nowy stan do przechowywania danych o evencie
-  const [isLoading, setIsLoading] = useState(true); // Nowy stan do śledzenia ładowania danych
-  const [isError, setIsError] = useState(false); // Nowy stan do śledzenia błędów
+  const [eventData, setEventData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+
+  // TODO: update to use mutation
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,7 +38,7 @@ export const Event = () => {
     };
 
     if (eventId) {
-      fetchData();
+      fetchData().then();
     }
   }, [eventId]); // Dodajemy eventId jako zależność
 
@@ -45,7 +47,7 @@ export const Event = () => {
       updateAttendance(eventId, playerId, status),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(['event', eventId.toString()]); // Usuwamy .then(), ponieważ nie jest potrzebne
+        queryClient.invalidateQueries(['event', eventId.toString()]);
         refetch(); // Usuwamy .then(), ponieważ nie jest potrzebne
       },
     }
@@ -76,6 +78,7 @@ export const Event = () => {
     'yyyy-MM-dd HH:mm',
     { locale: pl }
   );
+
   const eventEnd = eventData.end_time
     ? format(new Date(eventData.end_time), 'yyyy-MM-dd HH:mm', { locale: pl })
     : 'n/d';

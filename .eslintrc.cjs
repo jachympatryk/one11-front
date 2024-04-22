@@ -48,5 +48,9 @@ module.exports = {
     'react/react-in-jsx-scope': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+    "react/no-unknown-property": ["error", { ignore: [".tsx"] }],
   },
 };
+
+
+

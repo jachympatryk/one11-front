@@ -7,13 +7,11 @@ import React, {
 } from 'react';
 import { useApp } from './app.context.tsx';
 import { useQuery } from 'react-query';
-import {
-  getTeamDetails,
-  TeamDetailsResponse,
-} from '../../server/team/team.server.ts';
+import { getTeamDetails } from '../../server/team/team.server.ts';
 import { EventModel } from '../../models/event.ts';
 import { PlayerModel, PlayerPosition } from '../../models/player.ts';
 import { TableModel } from '../../models/table.ts';
+import { TeamDetailsResponse } from '../../models/team.ts';
 
 interface DetailsContextType {
   events: EventModel[];
@@ -23,6 +21,7 @@ interface DetailsContextType {
   userIsPlayer: boolean;
   tableData: TableModel[];
   isTeamDetailsLoading: boolean;
+  refetchTeamDetails: () => void;
 }
 
 const DetailsContext = createContext<DetailsContextType | undefined>(undefined);

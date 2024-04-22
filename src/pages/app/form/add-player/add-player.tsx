@@ -1,12 +1,10 @@
-// src/components/AddPlayerForm.tsx
-
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { useMutation } from 'react-query';
-import { formatISO } from 'date-fns';
 import { createPlayer } from '../../../../server/player/player.server.ts';
-import { useApp } from '../../app.context.tsx';
 import { useDetails } from '../../details.context.tsx';
+import { PlayerModel, PlayerPosition } from '../../../../models/player.ts';
+import { useApp } from '../../app.context.tsx';
 
 const PlayerSchema = Yup.object().shape({
   name: Yup.string().required('Imię jest wymagane'),
@@ -16,16 +14,21 @@ const PlayerSchema = Yup.object().shape({
   active: Yup.boolean(),
   teamId: Yup.number().nullable(),
   clubId: Yup.number().nullable(),
+  position: Yup.string()
+    .oneOf(['GOALKEEPER', 'DEFENDER', 'MIDFIELDER', 'STRIKER'])
+    .required('Pozycja jest wymagana'),
 });
 
-export const AddPlayerForm = ({ closeModal }) => {
+export type CreatePlayerModel = Omit<PlayerModel, 'id'>;
+
+export const AddPlayerForm = ({ closeModal }: { closeModal: () => void }) => {
   const { refetchTeamDetails } = useDetails();
+  const { userSelectedFunctionality } = useApp();
 
   const {
     mutateAsync: createPlayerMutation,
     isLoading,
     isError,
-    error,
   } = useMutation(createPlayer, {
     onSuccess: () => {
       console.log('Player created successfully');
@@ -45,25 +48,30 @@ export const AddPlayerForm = ({ closeModal }) => {
           name: '',
           surname: '',
           date_of_birth: '',
-          number: '',
+          number: 0, // Początkowa wartość dla typu number powinna być liczbową wartością
           active: true,
-          teamId: null,
-          clubId: null,
+          teamId: userSelectedFunctionality?.teamId,
+          clubId: userSelectedFunctionality?.clubId,
+          position: 'DEFENDER' as PlayerPosition,
         }}
         validationSchema={PlayerSchema}
         onSubmit={async (values, actions) => {
-          const formattedValues = {
+          const formattedValues: CreatePlayerModel = {
             ...values,
-            date_of_birth: values.date_of_birth
-              ? formatISO(new Date(values.date_of_birth))
-              : null,
+            date_of_birth: new Date(values.date_of_birth),
+            number: Number(values.number),
+            created_at: new Date(), // Data utworzenia jest ustawiana na bieżącą datę
           };
 
-          formattedValues.position = 'DEFENDER';
-
-          await createPlayerMutation(formattedValues);
-          actions.setSubmitting(false);
-          actions.resetForm();
+          try {
+            await createPlayerMutation(formattedValues);
+            console.log('Player created successfully');
+            actions.resetForm();
+          } catch (error) {
+            console.error('Error creating player:', error);
+          } finally {
+            actions.setSubmitting(false);
+          }
         }}
       >
         {({ isSubmitting }) => (
@@ -77,16 +85,19 @@ export const AddPlayerForm = ({ closeModal }) => {
             />
             <Field name="number" type="number" placeholder="Numer" />
             <Field name="active" type="checkbox" />
-            <Field name="teamId" type="number" placeholder="ID Drużyny" />
-            <Field name="clubId" type="number" placeholder="ID Klubu" />
+
+            <Field name="position" as="select">
+              <option value="GOALKEEPER">Bramkarz</option>
+              <option value="DEFENDER">Obrońca</option>
+              <option value="MIDFIELDER">Pomocnik</option>
+              <option value="STRIKER">Napastnik</option>
+            </Field>
 
             <button type="submit" disabled={isSubmitting || isLoading}>
               Dodaj Zawodnika
             </button>
 
-            {isError && (
-              <p>Error: {error?.message || 'Unknown error occurred'}</p>
-            )}
+            {isError && <p>Unknown error occurred</p>}
           </Form>
         )}
       </Formik>

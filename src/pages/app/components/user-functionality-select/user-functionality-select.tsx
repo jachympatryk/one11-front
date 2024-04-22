@@ -11,8 +11,6 @@ export const UserFunctionalitySelect = () => {
     setUserSelectedFunctionality(functionality);
   };
 
-  console.log(userPlayers);
-
   return (
     <div className={styles.container}>
       <ul className={styles.list}>

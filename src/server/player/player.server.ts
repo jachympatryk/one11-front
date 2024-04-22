@@ -1,22 +1,11 @@
-import { fetchFromBackend } from '../server.ts'; // Zakładam, że obsługuje również metody POST
-
-export interface PlayerModel {
-  id?: number;
-  name: string;
-  surname: string;
-  date_of_birth: Date;
-  number: number;
-  active?: boolean;
-  created_at?: Date;
-  teamId?: number;
-  clubId?: number;
-}
+import { fetchFromBackend } from '../server.ts';
+import { CreatePlayerModel } from '../../pages/app/form/add-player/add-player.tsx'; // Zakładam, że obsługuje również metody POST
 
 export const createPlayer = async (
-  playerData: PlayerModel
-): Promise<PlayerModel | null> => {
+  playerData: CreatePlayerModel
+): Promise<CreatePlayerModel | null> => {
   try {
-    const response = await fetchFromBackend<PlayerModel>('players/', {
+    const response = await fetchFromBackend<CreatePlayerModel>('players/', {
       method: 'POST',
       body: playerData,
     });
