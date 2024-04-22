@@ -4,22 +4,24 @@
     "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
+    "moduleResolution": "node",
     "skipLibCheck": true,
-
-    /* Bundler mode */
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-
-    /* Linting */
+    "esModuleInterop": true,
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": "./src",  // Ustawienie bazowego URL dla ścieżek modułów
+    "paths": {
+      "@components/*": ["components/*"],  // Alias do katalogu components
+      "@models/*": ["models/*"],  // Alias do katalogu models
+      "@utils/*": ["utils/*"]   // Alias do katalogu utils
+    }
   },
-  "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }

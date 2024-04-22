@@ -13,6 +13,7 @@ export interface EventModel {
   description_before?: string; // Opcjonalny
   description_after?: string; // Opcjonalny
   teamId: number; // Zakładam, że to jest zawsze wymagane, nie ma znaku zapytania
+  attendances: AttendanceModel[];
 }
 
 export type CreateEventModel = Omit<EventModel, 'id'>;
@@ -30,4 +31,4 @@ export interface AttendanceModel {
   status: AttendanceStatus;
 }
 
-export type AttendanceStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED';
+export type AttendanceStatus = 'PENDING' | 'CONFIRMED' | 'ABSENT' | 'LATE';

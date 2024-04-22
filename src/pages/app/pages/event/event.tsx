@@ -12,6 +12,7 @@ import {
 } from '../../../../server/event/event.server.ts';
 import { mapAttendanceStatus } from '../../../../utils/mapAttendanceStatus.ts';
 import { useApp } from '../../app.context.tsx';
+import { AttendanceStatus, EventModel } from '../../../../models/event.ts';
 
 export const Event = () => {
   const { userSelectedFunctionality } = useApp();
@@ -19,16 +20,18 @@ export const Event = () => {
   const { eventId } = useParams();
   const queryClient = useQueryClient();
 
-  const [eventData, setEventData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
+  const [eventData, setEventData] = useState<EventModel | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isError, setIsError] = useState<boolean>(false);
 
   // TODO: update to use mutation
+
+  const eventNumber = parseInt(String(eventId as unknown as number));
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getEvent(parseInt(eventId) || 0);
+        const data = await getEvent(eventNumber);
         setEventData(data);
         setIsLoading(false);
       } catch (error) {
@@ -40,31 +43,38 @@ export const Event = () => {
     if (eventId) {
       fetchData().then();
     }
-  }, [eventId]); // Dodajemy eventId jako zależność
+  }, [eventId]);
 
   const mutation = useMutation(
-    ({ eventId, playerId, status }) =>
-      updateAttendance(eventId, playerId, status),
+    ({
+      eventId,
+      playerId,
+      status,
+    }: {
+      eventId: number;
+      playerId: number;
+      status: AttendanceStatus;
+    }) => updateAttendance(eventId, playerId, status),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(['event', eventId.toString()]);
-        refetch(); // Usuwamy .then(), ponieważ nie jest potrzebne
+        queryClient.invalidateQueries(['event', eventId?.toString()]).then();
+        refetch().then();
       },
     }
   );
 
   const refetch = async () => {
     try {
-      const data = await getEvent(parseInt(eventId) || 0);
+      const data = await getEvent(eventNumber);
       setEventData(data);
     } catch (error) {
       setIsError(true);
     }
   };
 
-  const changeAttendanceStatus = (newStatus) => {
+  const changeAttendanceStatus = (newStatus: AttendanceStatus) => {
     mutation.mutate({
-      eventId: parseInt(eventId) || 0,
+      eventId: eventNumber,
       playerId: userSelectedFunctionality?.id || 0,
       status: newStatus,
     });
@@ -83,10 +93,13 @@ export const Event = () => {
     ? format(new Date(eventData.end_time), 'yyyy-MM-dd HH:mm', { locale: pl })
     : 'n/d';
 
-  const attendanceMap = eventData.attendances.reduce((acc, curr) => {
-    acc[curr.playerId] = curr.status;
-    return acc;
-  }, {});
+  const attendanceMap: AttendanceStatus = eventData.attendances.reduce(
+    (acc, curr) => {
+      acc[curr.playerId] = curr.status;
+      return acc;
+    },
+    {}
+  );
 
   let currentPlayerAttendance = null;
 
@@ -114,7 +127,8 @@ export const Event = () => {
       {userIsPlayer && (
         <div>
           <p>
-            Twój status: {mapAttendanceStatus(currentPlayerAttendance?.status)}
+            Twój status:{' '}
+            {mapAttendanceStatus(currentPlayerAttendance?.status as string)}
           </p>
           <button onClick={() => changeAttendanceStatus('CONFIRMED')}>
             Potwierdź
@@ -122,8 +136,8 @@ export const Event = () => {
           <button onClick={() => changeAttendanceStatus('ABSENT')}>
             Nieobecny
           </button>
-          <button onClick={() => changeAttendanceStatus('EXCUSED')}>
-            Usprawiedliwiony
+          <button onClick={() => changeAttendanceStatus('LATE')}>
+            Spóźniony
           </button>
         </div>
       )}
