@@ -3,12 +3,15 @@ import react from '@vitejs/plugin-react';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: './', // Użyj '/', jeśli hostujesz w głównym katalogu
+  // Ustawienie bazy na '/' jest idealne, jeśli hostujesz aplikację w głównym katalogu
+  base: '/',
   plugins: [react()],
   build: {
-    manifest: true,
-    // rollupOptions: {
-    //   input: 'src/main.tsx',
-    // },
+    manifest: true, // Włączenie manifestu zasobów, co jest pomocne przy cache'owaniu
+    // Opcje Rollup mogą być potrzebne do specyfikacji, gdy masz skomplikowaną strukturę projektu
+    // lub chcesz dodać dodatkowe pliki do kompilacji
+    rollupOptions: {
+      // input: 'src/main.tsx', // Ścieżka do głównego pliku wejściowego aplikacji, zakomentowana dla ułatwienia
+    },
   },
 });
