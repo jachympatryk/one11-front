@@ -5,7 +5,4 @@
       "dest": "/"
     }
   ]
-//  "rewrites":  [
-//    {"source": "/(.*)", "destination": "/"}
-//  ]
 }
