@@ -3,12 +3,8 @@ import react from '@vitejs/plugin-react';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: './', // Użyj '/', jeśli hostujesz w głównym katalogu
   plugins: [react()],
-  // server: {
-  //     proxy: {
-  //         '/api': 'http://localhost:3100',
-  //     },
-  // },
   build: {
     manifest: true,
     rollupOptions: {
