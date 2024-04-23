@@ -16,7 +16,7 @@ export interface EventModel {
   attendances: AttendanceModel[];
 }
 
-export type CreateEventModel = Omit<EventModel, 'id'>;
+export type CreateEventModel = Omit<EventModel, 'id' | 'attendances'>;
 
 export type EventType =
   | 'TRAINING'
@@ -32,3 +32,7 @@ export interface AttendanceModel {
 }
 
 export type AttendanceStatus = 'PENDING' | 'CONFIRMED' | 'ABSENT' | 'LATE';
+
+export interface AttendanceMap {
+  [playerId: number]: AttendanceStatus;
+}

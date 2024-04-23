@@ -93,13 +93,15 @@ export const Event = () => {
     ? format(new Date(eventData.end_time), 'yyyy-MM-dd HH:mm', { locale: pl })
     : 'n/d';
 
-  const attendanceMap: AttendanceStatus = eventData.attendances.reduce(
-    (acc, curr) => {
+  interface AttendanceMap {
+    [playerId: number]: AttendanceStatus;
+  }
+
+  const attendanceMap: AttendanceMap =
+    eventData.attendances.reduce<AttendanceMap>((acc, curr) => {
       acc[curr.playerId] = curr.status;
       return acc;
-    },
-    {}
-  );
+    }, {} as AttendanceMap);
 
   let currentPlayerAttendance = null;
 

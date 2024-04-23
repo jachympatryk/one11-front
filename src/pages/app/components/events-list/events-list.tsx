@@ -6,28 +6,31 @@ import { monthNames } from '../../../../constants/data.ts';
 import { EventModel } from '../../../../models/event.ts';
 import { EventCard } from '../event-card/event-card.tsx';
 
+interface EventsByDay {
+  [day: string]: EventModel[];
+}
+
+interface EventsByMonth {
+  [month: string]: EventsByDay;
+}
+
 export const EventsList = () => {
   const { events } = useDetails();
 
-  const eventsGroupedByMonthAndDay: EventModel[] = events.reduce(
-    (acc, event) => {
-      const month = format(parseISO(event.start_time), 'yyyy-MM', {
+  const eventsGroupedByMonthAndDay: EventsByMonth =
+    events.reduce<EventsByMonth>((acc, event) => {
+      const month = format(event.start_time, 'yyyy-MM', {
         locale: pl,
       });
-      const day = format(parseISO(event.start_time), 'EEEE dd.MM', {
+      const day = format(event.start_time, 'EEEE dd.MM', {
         locale: pl,
       });
-      if (!acc[month]) {
-        acc[month] = {};
-      }
-      if (!acc[month][day]) {
-        acc[month][day] = [];
-      }
+
+      acc[month] = acc[month] || {};
+      acc[month][day] = acc[month][day] || [];
       acc[month][day].push(event);
       return acc;
-    },
-    {}
-  );
+    }, {});
 
   const sortedMonths = Object.keys(eventsGroupedByMonthAndDay).sort();
 
@@ -37,7 +40,7 @@ export const EventsList = () => {
       <div className={styles.eventsWrapper}>
         {sortedMonths.map((month) => {
           const date = parseISO(`${month}-01`); // Tworzymy datę z pierwszego dnia miesiąca, aby móc wykorzystać getMonth()
-          const monthName = monthNames[date.getMonth() + 1]; // Używamy getMonth() + 1, aby uzyskać poprawny miesiąc z mapy
+          const monthName = monthNames[date.getMonth() + 1];
           const year = date.getFullYear(); // Pobieramy rok
 
           return (
@@ -52,7 +55,8 @@ export const EventsList = () => {
                       {eventsGroupedByMonthAndDay[month][day]
                         .sort(
                           (a, b) =>
-                            new Date(a.start_time) - new Date(b.start_time)
+                            new Date(a.start_time).getTime() -
+                            new Date(b.start_time).getTime()
                         )
                         .map((event) => (
                           <EventCard event={event} key={event.id} />

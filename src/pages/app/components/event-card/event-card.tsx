@@ -3,7 +3,7 @@ import { updateAttendance } from '../../../../server/event/event.server.ts';
 import { Link } from 'react-router-dom';
 import { mapEventName } from '../../../../utils/mapEventName.ts';
 import { format } from 'date-fns';
-import { EventModel } from '../../../../models/event.ts';
+import { AttendanceStatus, EventModel } from '../../../../models/event.ts';
 import styles from './event-card.module.scss';
 import { pl } from 'date-fns/locale';
 import { useDetails } from '../../details.context.tsx';
@@ -15,8 +15,15 @@ export const EventCard = ({ event }: { event: EventModel }) => {
   const { userSelectedFunctionality } = useApp();
 
   const mutation = useMutation(
-    ({ eventId, playerId, status }) =>
-      updateAttendance(eventId, playerId, status),
+    ({
+      eventId,
+      playerId,
+      status,
+    }: {
+      eventId: number;
+      playerId: number;
+      status: AttendanceStatus;
+    }) => updateAttendance(eventId, playerId, status),
     {
       onSuccess: () => {
         // Tutaj możemy zaktualizować cache lub ponownie załadować dane
@@ -25,7 +32,7 @@ export const EventCard = ({ event }: { event: EventModel }) => {
     }
   );
 
-  const changeAttendanceStatus = (newStatus) => {
+  const changeAttendanceStatus = (newStatus: AttendanceStatus) => {
     console.log(newStatus);
     mutation.mutate({
       eventId: event.id,
@@ -49,13 +56,13 @@ export const EventCard = ({ event }: { event: EventModel }) => {
       {userIsPlayer && (
         <div>
           <button onClick={() => changeAttendanceStatus('CONFIRMED')}>
-            Potwierdź
+            Obecny
           </button>
           <button onClick={() => changeAttendanceStatus('ABSENT')}>
             Nieobecny
           </button>
-          <button onClick={() => changeAttendanceStatus('EXCUSED')}>
-            Usprawiedliwiony
+          <button onClick={() => changeAttendanceStatus('LATE')}>
+            Spoźniony
           </button>
         </div>
       )}

@@ -47,7 +47,6 @@ export const AuthPage = () => {
       <Auth
         supabaseClient={supabase}
         theme="dark"
-        providers={['email']}
         appearance={{ theme: ThemeSupa }}
       />
     );

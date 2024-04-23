@@ -1,4 +1,4 @@
-export const monthNames = {
+export const monthNames: { [key: number]: string } = {
   1: 'styczeń',
   2: 'luty',
   3: 'marzec',

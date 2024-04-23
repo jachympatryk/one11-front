@@ -4,7 +4,7 @@ import { useMutation } from 'react-query';
 import { createEvent } from '../../../../server/event/event.server.ts';
 import { useApp } from '../../app.context.tsx';
 import { useDetails } from '../../details.context.tsx';
-import { EventModel, EventType } from '../../../../models/event.ts';
+import { CreateEventModel, EventType } from '../../../../models/event.ts';
 
 const EventSchema = Yup.object().shape({
   name: Yup.string().required('Nazwa wydarzenia jest wymagana'),
@@ -20,8 +20,6 @@ const EventSchema = Yup.object().shape({
   description_after: Yup.string().optional(),
   teamId: Yup.number().required('ID drużyny jest wymagane'),
 });
-
-export type CreateEventModel = Omit<EventModel, 'id'>;
 
 export const AddEvent = ({ closeModal }: { closeModal: () => void }) => {
   const { userSelectedFunctionality } = useApp();

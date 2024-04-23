@@ -1,7 +1,7 @@
 import { useDetails } from '../../details.context.tsx';
 import styles from './players-buttons.module.scss';
 import { ModalComponent } from '../../../../components/modal/modal.tsx';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { AddPlayerForm } from '../../form/add-player/add-player.tsx';
 
 type PlayerPosition = 'GOALKEEPER' | 'DEFENDER' | 'MIDFIELDER' | 'STRIKER';

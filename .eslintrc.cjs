@@ -1,35 +1,35 @@
 module.exports = {
-  parser: '@typescript-eslint/parser', // Specifies the ESLint parser
+  env: {
+    browser: true,
+    es2021: true,
+  },
   extends: [
     'eslint:recommended',
-    'plugin:@typescript-eslint/recommended', // Uses the recommended rules from @typescript-eslint/eslint-plugin
+    'plugin:@typescript-eslint/recommended',
     'plugin:react/recommended',
-    'plugin:prettier/recommended'
+    'plugin:prettier/recommended', // This line does all the integration
   ],
+  overrides: [
+    {
+      env: {
+        node: true,
+      },
+      files: ['.eslintrc.{js,cjs}'],
+      parserOptions: {
+        sourceType: 'script',
+      },
+    },
+  ],
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
     },
-    ecmaVersion: 2020,
+    ecmaVersion: 2021,
     sourceType: 'module',
   },
-  settings: {
-    react: {
-      version: 'detect', // Tells eslint-plugin-react to automatically detect the version of React to use
-    },
-  },
-  plugins: [
-    '@typescript-eslint',
-    'react',
-    'prettier'
-  ],
-  env: {
-    browser: true,
-    es2021: true,
-    node: true,
-  },
+  plugins: ['@typescript-eslint', 'react', 'prettier'],
   rules: {
-    // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
     'prettier/prettier': [
       'error',
       {
@@ -42,16 +42,12 @@ module.exports = {
         bracketSpacing: true,
       },
     ],
-    '@typescript-eslint/explicit-module-boundary-types': 'off'
+    quotes: ['error', 'single'],
+    'no-console': 'off',
+    'react/jsx-uses-react': 'off',
+    'react/react-in-jsx-scope': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+    'react/no-unknown-property': ['error', { ignore: ['^data-'] }]
   },
-  overrides: [
-    {
-      files: ['*.ts', '*.tsx'],
-      rules: {
-        'react/react-in-jsx-scope': 'off',
-        'react/jsx-uses-react': 'off',
-      }
-    }
-  ]
 };
-
