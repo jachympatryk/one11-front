@@ -15,10 +15,12 @@ export async function fetchFromBackend<T = never>(
   endpoint: string,
   { method = 'GET', body, headers = {} }: FetchOptions = {}
 ): Promise<T> {
+  const apiKey = process.env.REACT_APP_API_KEY as string;
   const config: RequestInit = {
     method,
     headers: {
       'Content-Type': 'application/json',
+      'x-api-key': apiKey, // Dodajemy klucz API do nagłówków
       ...headers,
     },
   };
