@@ -3,7 +3,7 @@ interface BackendError {
   statusCode?: number;
 }
 
-const baseUrl = 'http://localhost:3100';
+const baseUrl = 'https://hammerhead-app-jouqe.ondigitalocean.app';
 
 interface FetchOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
