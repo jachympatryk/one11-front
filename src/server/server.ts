@@ -15,7 +15,7 @@ export async function fetchFromBackend<T = never>(
   endpoint: string,
   { method = 'GET', body, headers = {} }: FetchOptions = {}
 ): Promise<T> {
-  const apiKey = import.meta.env.VITE_REACT_APP_SUPABASE_ANON_KEY as string;
+  const apiKey = import.meta.env.VITE_REACT_APP_API_KEY as string;
 
   const config: RequestInit = {
     method,
