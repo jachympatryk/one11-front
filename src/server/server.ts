@@ -3,7 +3,7 @@ interface BackendError {
   statusCode?: number;
 }
 
-const baseUrl = 'https://hammerhead-app-jouqe.ondigitalocean.app';
+const isDev = import.meta.env.MODE === 'development';
 
 interface FetchOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
@@ -15,13 +15,11 @@ export async function fetchFromBackend<T = never>(
   endpoint: string,
   { method = 'GET', body, headers = {} }: FetchOptions = {}
 ): Promise<T> {
-  const apiKey = import.meta.env.VITE_REACT_APP_API_KEY as string;
-
   const config: RequestInit = {
     method,
     headers: {
       'Content-Type': 'application/json',
-      'x-api-key': apiKey, // Dodajemy klucz API do nagłówków
+      'x-api-key': import.meta.env.VITE_REACT_APP_API_KEY,
       ...headers,
     },
   };
@@ -32,7 +30,10 @@ export async function fetchFromBackend<T = never>(
     config.body = JSON.stringify(body);
   }
 
-  const response = await fetch(`${baseUrl}/${endpoint}`, config);
+  const response = await fetch(
+    `${isDev ? import.meta.env.VITE_REACT_APP_DEV_URL : import.meta.env.VITE_REACT_APP_PROD_URL}/${endpoint}`,
+    config
+  );
 
   if (!response.ok) {
     let error: BackendError;
