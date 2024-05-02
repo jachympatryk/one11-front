@@ -5,7 +5,9 @@ export const getTeamDetails = async (
   teamId: number
 ): Promise<TeamDetailsResponse | null> => {
   try {
-    return await fetchFromBackend<TeamDetailsResponse>(`teams/${teamId}`);
+    return await fetchFromBackend<TeamDetailsResponse>(`teams/${teamId}`, {
+      method: 'GET',
+    });
   } catch (error) {
     console.error('Failed to fetch team details:', error);
     return null;

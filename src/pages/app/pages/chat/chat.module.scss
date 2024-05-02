@@ -1,0 +1,34 @@
+@import 'src/assets/styles/_variables.scss';
+
+.wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px;
+}
+
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  max-height: 100%;
+  overflow: hidden;
+  flex-direction: column;
+  align-items: center;
+  background-color: #1f1f20;
+  -webkit-box-shadow: 12px 12px 13px -9px rgba(31, 31, 32, 1);
+  -moz-box-shadow: 12px 12px 13px -9px rgba(31, 31, 32, 1);
+  box-shadow: 12px 12px 13px -9px rgba(31, 31, 32, 1);
+  border-radius: 16px;
+  padding: 16px;
+
+  @media screen and (min-width: $breakpoint-sm) {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+  }
+}
+
+
+

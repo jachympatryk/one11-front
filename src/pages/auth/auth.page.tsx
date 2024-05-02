@@ -5,7 +5,7 @@ import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { useNavigate } from 'react-router-dom';
 import { syncUserWithBackend } from '../../server/user/user.server.ts';
 
-const supabase = createClient(
+export const supabase = createClient(
   import.meta.env.VITE_REACT_APP_SUPABASE_URL as string,
   import.meta.env.VITE_REACT_APP_SUPABASE_ANON_KEY as string
 );
@@ -17,6 +17,12 @@ export const AuthPage = () => {
   useEffect(() => {
     const updateSessionAndSyncUser = async (session: Session | null) => {
       setSession(session);
+
+      const user = await supabase.auth.getUser();
+      console.log(session);
+      console.log('******');
+      console.log(user);
+
       if (session?.user) {
         try {
           await syncUserWithBackend({

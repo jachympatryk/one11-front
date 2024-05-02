@@ -24,8 +24,6 @@ export async function fetchFromBackend<T = never>(
     },
   };
 
-  console.log(config.headers);
-
   if (body) {
     config.body = JSON.stringify(body);
   }

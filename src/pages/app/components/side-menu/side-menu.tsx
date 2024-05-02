@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { FiCalendar, FiHome, FiUsers } from 'react-icons/fi';
+import { FiCalendar, FiHome, FiUsers, FiMessageSquare } from 'react-icons/fi';
 import styles from './side-menu.module.scss';
 
 export const SideMenu = () => {
@@ -22,6 +22,12 @@ export const SideMenu = () => {
         className={({ isActive }) => (isActive ? styles.activeLink : '')}
       >
         <FiUsers />
+      </NavLink>
+      <NavLink
+        to="/app/chat"
+        className={({ isActive }) => (isActive ? styles.activeLink : '')}
+      >
+        <FiMessageSquare />
       </NavLink>
     </div>
   );
