@@ -17,12 +17,6 @@ export const AuthPage = () => {
   useEffect(() => {
     const updateSessionAndSyncUser = async (session: Session | null) => {
       setSession(session);
-
-      const user = await supabase.auth.getUser();
-      console.log(session);
-      console.log('******');
-      console.log(user);
-
       if (session?.user) {
         try {
           await syncUserWithBackend({
