@@ -3,7 +3,7 @@ interface BackendError {
   statusCode?: number;
 }
 
-const isDev = import.meta.env.MODE === 'development';
+const isDev = import.meta.env.VITE_REACT_APP_MODE === 'development';
 
 interface FetchOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
