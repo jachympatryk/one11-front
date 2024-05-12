@@ -5,7 +5,7 @@ import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { useNavigate } from 'react-router-dom';
 import { syncUserWithBackend } from '../../server/user/user.server.ts';
 
-export const supabase = createClient(
+const supabase = createClient(
   import.meta.env.VITE_REACT_APP_SUPABASE_URL as string,
   import.meta.env.VITE_REACT_APP_SUPABASE_ANON_KEY as string
 );

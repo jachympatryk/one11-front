@@ -10,6 +10,7 @@ import { Calendar } from './pages/app/pages/calendar/calendar.tsx';
 import { Players } from './pages/app/pages/players/players.tsx';
 import { Event } from './pages/app/pages/event/event.tsx';
 import { Chat } from './pages/app/pages/chat/chat.tsx';
+import { Lineup } from './pages/app/pages/lineup/lineup.tsx';
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ function App() {
             <Route path="players" element={<Players />} />
             <Route path="event/:eventId" element={<Event />} />
             <Route path="chat" element={<Chat />} />
+            <Route path="lineup" element={<Lineup />} />
           </Route>
 
           <Route path="/auth" element={<PageRoute element={<AuthPage />} />} />

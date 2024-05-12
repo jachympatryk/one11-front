@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import { FiCalendar, FiHome, FiUsers, FiMessageSquare } from 'react-icons/fi';
 import styles from './side-menu.module.scss';
+import { IoFootballSharp } from 'react-icons/io5';
 
 export const SideMenu = () => {
   return (
@@ -28,6 +29,12 @@ export const SideMenu = () => {
         className={({ isActive }) => (isActive ? styles.activeLink : '')}
       >
         <FiMessageSquare />
+      </NavLink>
+      <NavLink
+        to="/app/lineup"
+        className={({ isActive }) => (isActive ? styles.activeLink : '')}
+      >
+        <IoFootballSharp />
       </NavLink>
     </div>
   );

@@ -26,7 +26,7 @@ export const DayCell = ({
           events?.map((event) => (
             <div
               className={styles.cell}
-              data-type={event.event_type} // Zmienione z 'datatype' na 'data-type'
+              datatype={event.event_type} // Zmienione z 'datatype' na 'data-type'
               key={event.id}
             ></div>
           ))}

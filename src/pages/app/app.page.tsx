@@ -10,6 +10,7 @@ import { useApp } from './app.context.tsx';
 import { Players } from './pages/players/players.tsx';
 import { Event } from './pages/event/event.tsx';
 import { Chat } from './pages/chat/chat.tsx';
+import { Lineup } from './pages/lineup/lineup.tsx';
 
 export const AppPage = () => {
   const isMobile = useIsMobile();
@@ -33,6 +34,7 @@ export const AppPage = () => {
           <Route path="event/:eventId" element={<Event />} />
           <Route path="players" element={<Players />} />
           <Route path="chat" element={<Chat />} />
+          <Route path="lineup" element={<Lineup />} />
         </Routes>
       </div>
     </div>
