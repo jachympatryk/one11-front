@@ -46,18 +46,18 @@ p, h1,h2,h3,h4,h5,h6 {
   box-sizing: border-box;
 }
 
-*[datatype='TRAINING'] {
+*[data-type='TRAINING'] {
   background-color: #de8639;
 }
 
-*[datatype='MATCH'] {
+*[data-type='MATCH'] {
   background-color: #029835;
 }
 
-*[datatype='MEETING'] {
+*[data-type='MEETING'] {
   background-color: #4253ac;
 }
 
-*[datatype='OTHER'] {
+*[data-type='OTHER'] {
   background-color: #717171;
 }

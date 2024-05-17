@@ -29,7 +29,7 @@ export const Chat = () => {
     }
   );
 
-  const {} = useQuery<any[] | null>(
+  useQuery<MessageModel[] | null>(
     ['messages', selectedConversation?.id],
     () => getMessagesByConversationId(selectedConversation?.id as number),
     {

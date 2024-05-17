@@ -7,7 +7,7 @@ const isDev = import.meta.env.VITE_REACT_APP_MODE === 'development';
 
 interface FetchOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
-  body?: Record<string, unknown> | Array<unknown>;
+  body?: unknown;
   headers?: Record<string, string>;
 }
 

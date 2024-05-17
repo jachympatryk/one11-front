@@ -11,6 +11,7 @@ import { Players } from './pages/players/players.tsx';
 import { Event } from './pages/event/event.tsx';
 import { Chat } from './pages/chat/chat.tsx';
 import { Lineup } from './pages/lineup/lineup.tsx';
+import { LineupDetails } from './pages/lineup/lineup-details/lineup-details.tsx';
 
 export const AppPage = () => {
   const isMobile = useIsMobile();
@@ -35,6 +36,7 @@ export const AppPage = () => {
           <Route path="players" element={<Players />} />
           <Route path="chat" element={<Chat />} />
           <Route path="lineup" element={<Lineup />} />
+          <Route path="lineup/:lineupId" element={<LineupDetails />} />
         </Routes>
       </div>
     </div>

@@ -2,16 +2,65 @@ import React, { useState } from 'react';
 import styles from './football-pitch.module.scss';
 import { useDetails } from '../../../details.context.tsx';
 import { PlayerModel } from '../../../../../models/player.ts';
+import { createTeamLineup } from '../../../../../server/team/team.server.ts';
+import { useMutation } from 'react-query';
+import { useNavigate } from 'react-router-dom';
+import { useApp } from '../../../app.context.tsx';
+import {
+  TeamLineupModel,
+  TeamLineupRequest,
+} from '../../../../../models/lineup.ts';
 
-interface PlayerPosition {
+export interface PlayerPosition {
   id: number;
   positionId: string;
 }
 
+export interface ApiError {
+  message: string;
+}
+
 export const FootballPitch = () => {
+  const navigate = useNavigate();
+
+  const { userSelectedFunctionality } = useApp();
   const { players } = useDetails();
 
-  const [currentLineup, setCurrentLineup] = useState<PlayerPosition[]>([]); // Define the state with the correct type
+  const [currentLineup, setCurrentLineup] = useState<PlayerPosition[]>([]);
+  const [lineupName, setLineupName] = useState('');
+  const [formationName, setFormationName] = useState('');
+
+  const { mutate: saveLineup, isLoading } = useMutation<
+    TeamLineupModel | null,
+    ApiError,
+    TeamLineupRequest
+  >(
+    (lineupData) =>
+      createTeamLineup(userSelectedFunctionality?.teamId || 0, lineupData),
+    {
+      onSuccess: (res) => {
+        console.log('Zapisano skład', res);
+        if (res) {
+          navigate(`/app/lineup/${res.id}`);
+        }
+      },
+      onError: (error) => {
+        alert(
+          `Błąd przy zapisywaniu składu: ${error.message || 'Nieznany błąd'}`
+        );
+      },
+    }
+  );
+
+  const handleSaveLineup = () => {
+    const lineupData: TeamLineupRequest = {
+      // Użyj typu TeamLineupRequest
+      name: lineupName,
+      formationName: formationName,
+      players: currentLineup,
+    };
+    saveLineup(lineupData);
+  };
 
   const gridPositions = Array.from(
     { length: 70 },
@@ -111,7 +160,27 @@ export const FootballPitch = () => {
         <div className={styles.penaltyAreaLeft}></div>
         <div className={styles.penaltyAreaRight}></div>
       </div>
+
       <div className={styles.playerList}>
+        <input
+          value={lineupName}
+          onChange={(e) => setLineupName(e.target.value)}
+          placeholder="Nazwa składu"
+          className={styles.input}
+        />
+        <input
+          value={formationName}
+          onChange={(e) => setFormationName(e.target.value)}
+          placeholder="Nazwa formacji"
+          className={styles.input}
+        />
+        <button
+          onClick={handleSaveLineup}
+          disabled={isLoading}
+          className={styles.saveButton}
+        >
+          {isLoading ? 'Zapisywanie...' : 'Zapisz skład'}
+        </button>
         {players.map((player) => (
           <div
             key={player.id}

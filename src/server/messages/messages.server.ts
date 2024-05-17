@@ -1,13 +1,17 @@
 import { fetchFromBackend } from '../server.ts';
+import { MessageModel } from '../../models/messages.ts';
 
 export const getMessagesByConversationId = async (
   conversationId: number
-): Promise<any[] | null> => {
+): Promise<MessageModel[] | null> => {
   console.log('conversationId:', conversationId);
   try {
-    const response = await fetchFromBackend<any>(`messages/${conversationId}`, {
-      method: 'GET',
-    });
+    const response = await fetchFromBackend<MessageModel[]>(
+      `messages/${conversationId}`,
+      {
+        method: 'GET',
+      }
+    );
     console.log('Messages retrieved successfully:', response);
     return response;
   } catch (error) {
@@ -21,23 +25,16 @@ export const addMessage = async (
   content: string,
   userIsPlayer: boolean,
   authorId: number
-): Promise<any> => {
+): Promise<MessageModel | null> => {
   console.log('Adding message to conversationId:', conversationId);
   try {
-    const payload: Record<string, any> = {
-      conversationId,
-      content,
-    };
+    const payload = userIsPlayer
+      ? { conversationId, content, playerId: authorId }
+      : { conversationId, content, functionaryId: authorId };
 
-    if (userIsPlayer) {
-      payload.playerId = authorId;
-    } else {
-      payload.functionaryId = authorId;
-    }
-
-    const response = await fetchFromBackend<any>('messages', {
+    const response = await fetchFromBackend<MessageModel>('messages', {
       method: 'POST',
-      body: payload,
+      body: JSON.stringify(payload),
       headers: {
         'Content-Type': 'application/json',
       },
