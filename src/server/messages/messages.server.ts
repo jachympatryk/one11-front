@@ -34,7 +34,7 @@ export const addMessage = async (
 
     const response = await fetchFromBackend<MessageModel>('messages', {
       method: 'POST',
-      body: JSON.stringify(payload),
+      body: payload,
       headers: {
         'Content-Type': 'application/json',
       },
