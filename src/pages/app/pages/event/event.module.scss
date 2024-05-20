@@ -29,8 +29,37 @@
   padding: 16px;
 }
 
+
 .eventDetails {
   @extend  .eventBox;
+
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+
+  h3 {
+    justify-self: center;
+    align-self: center;
+    font-size: 24px;
+  }
+
+  button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    background-color: transparent;
+    color: #fff;
+    font-family: 'Montserrat';
+    font-size: 32px;
+    border: none;
+    cursor: pointer;
+  }
+
+  span {
+    font-weight: bold;
+  }
+
 
   @media screen and (min-width: $breakpoint-sm) {
     grid-column: 1 / 2;
@@ -38,21 +67,50 @@
   }
 }
 
+.icon {
+  font-size: 42px;
+}
+
+.time {
+  justify-self: center;
+  align-self: center;
+font-size: 64px;
+  margin: 0;
+padding: 0;
+  line-height: 64px;
+}
+
 .eventDescription {
   @extend  .eventBox;
+  text-align: left;
 
   @media screen and (min-width: $breakpoint-sm) {
+
     grid-column: 1 / 2;
     grid-row: 2 / 3;
   }
 }
 
-.attendanceList {
+.attendanceWrapper {
   @extend  .eventBox;
+  display: flex;
+  flex-direction: column;
+  height: max-content;
+
 
   @media screen and (min-width: $breakpoint-sm) {
+    display: grid;
+    grid-template-rows: 50px 1fr;
     grid-column: 2 / 3;
     grid-row: 1 / 3;
+  }
+}
+
+.attendanceList {
+  width: 100%;
+
+  @media screen and (min-width: $breakpoint-sm) {
+    overflow-y: auto;
   }
 }
 

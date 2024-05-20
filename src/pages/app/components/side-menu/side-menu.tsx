@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom';
 import { FiCalendar, FiHome, FiUsers, FiMessageSquare } from 'react-icons/fi';
 import styles from './side-menu.module.scss';
 import { IoFootballSharp } from 'react-icons/io5';
+import { MdOutlineTableRows } from 'react-icons/md';
 
 export const SideMenu = () => {
   return (
@@ -11,6 +12,12 @@ export const SideMenu = () => {
         className={({ isActive }) => (isActive ? styles.activeLink : '')}
       >
         <FiHome />
+      </NavLink>
+      <NavLink
+        to="/app/table"
+        className={({ isActive }) => (isActive ? styles.activeLink : '')}
+      >
+        <MdOutlineTableRows />
       </NavLink>
       <NavLink
         to="/app/calendar"

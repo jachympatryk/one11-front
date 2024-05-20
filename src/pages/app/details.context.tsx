@@ -22,6 +22,7 @@ interface DetailsContextType {
   tableData: TableModel[];
   isTeamDetailsLoading: boolean;
   refetchTeamDetails: () => void;
+  teamDataFetch: boolean;
 }
 
 const DetailsContext = createContext<DetailsContextType | undefined>(undefined);
@@ -38,6 +39,7 @@ export const DetailsProvider: React.FC<{ children: React.ReactNode }> = ({
     ''
   );
   const [userIsPlayer, setUserIsPlayer] = useState<boolean>(false);
+  const [teamDataFetch, setTeamDataFetch] = useState<boolean>(false);
 
   const {
     data: teamDetails,
@@ -54,8 +56,14 @@ export const DetailsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   );
 
+  console.log(teamDetails);
+
   useEffect(() => {
     if (teamDetails) {
+      if (teamDetails) {
+        setTeamDataFetch(true);
+      }
+
       setEvents(teamDetails.events);
       setPlayers(teamDetails.players);
       setTableData(teamDetails.table);
@@ -87,6 +95,7 @@ export const DetailsProvider: React.FC<{ children: React.ReactNode }> = ({
       userIsPlayer,
       isTeamDetailsLoading,
       refetchTeamDetails,
+      teamDataFetch,
     }),
     [
       userSelectedFunctionality,

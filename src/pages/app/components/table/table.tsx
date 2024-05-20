@@ -8,9 +8,28 @@ export const Table = () => {
     return <p>Ładowanie tabli...</p>;
   }
 
-  console.log(tableData);
+  // const downloadImage = async () => {
+  //   const tableElement = document.querySelector(
+  //     `.${styles.container} table`
+  //   ) as HTMLElement;
+  //   if (tableElement) {
+  //     const canvas = await html2canvas(tableElement);
+  //     const image = canvas
+  //       .toDataURL('image/png')
+  //       .replace('image/png', 'image/octet-stream');
+  //     const link = document.createElement('a');
+  //     link.download = 'table_snapshot.png'; // Nazwa pliku do pobrania
+  //     link.href = image;
+  //     link.click();
+  //   }
+  // };
+
   return (
     <div className={styles.container}>
+      {/*<button onClick={downloadImage} className={styles.floatingButton}>*/}
+      {/*  <MdDownload />*/}
+      {/*</button>*/}
+
       <table>
         <thead>
           <tr>

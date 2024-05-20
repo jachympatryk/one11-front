@@ -12,6 +12,7 @@ import { Event } from './pages/app/pages/event/event.tsx';
 import { Chat } from './pages/app/pages/chat/chat.tsx';
 import { Lineup } from './pages/app/pages/lineup/lineup.tsx';
 import { LineupDetails } from './pages/app/pages/lineup/lineup-details/lineup-details.tsx';
+import { Table } from './pages/app/pages/table/table.tsx';
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ function App() {
           <Route path="/" element={<PageRoute element={<LandingPage />} />} />
           <Route path="/app" element={<AppWrapper />}>
             <Route path="dashboard" element={<Dashboard />} />
+            <Route path="Table" element={<Table />} />
             <Route path="calendar" element={<Calendar />} />
             <Route path="players" element={<Players />} />
             <Route path="event/:eventId" element={<Event />} />

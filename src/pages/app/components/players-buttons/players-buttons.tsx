@@ -1,8 +1,5 @@
 import { useDetails } from '../../details.context.tsx';
 import styles from './players-buttons.module.scss';
-import { ModalComponent } from '../../../../components/modal/modal.tsx';
-import { useState } from 'react';
-import { AddPlayerForm } from '../../form/add-player/add-player.tsx';
 
 type PlayerPosition = 'GOALKEEPER' | 'DEFENDER' | 'MIDFIELDER' | 'STRIKER';
 
@@ -12,10 +9,9 @@ interface PositionOption {
 }
 
 export const PlayersButtons = () => {
-  const { players, playersFiltered, setPlayersFiltered, userIsPlayer } =
-    useDetails();
+  const { players, playersFiltered, setPlayersFiltered } = useDetails();
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // const [isModalOpen, setIsModalOpen] = useState(false);
 
   const isActive = (filter: PlayerPosition | '') =>
     playersFiltered === filter ? styles.activeButton : '';
@@ -37,14 +33,14 @@ export const PlayersButtons = () => {
 
   return (
     <div className={styles.container}>
-      <ModalComponent
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-        }}
-      >
-        <AddPlayerForm closeModal={() => setIsModalOpen(false)} />
-      </ModalComponent>
+      {/*<ModalComponent*/}
+      {/*  isOpen={isModalOpen}*/}
+      {/*  onClose={() => {*/}
+      {/*    setIsModalOpen(false);*/}
+      {/*  }}*/}
+      {/*>*/}
+      {/*  <AddPlayerForm closeModal={() => setIsModalOpen(false)} />*/}
+      {/*</ModalComponent>*/}
       <div className={styles.filters}>
         {positions.map(({ id, name }) => (
           <button
@@ -57,15 +53,15 @@ export const PlayersButtons = () => {
           </button>
         ))}
       </div>
-      {!userIsPlayer && (
-        <button
-          onClick={() => {
-            setIsModalOpen(true);
-          }}
-        >
-          dodaj nowe
-        </button>
-      )}
+      {/*{!userIsPlayer && (*/}
+      {/*  <button*/}
+      {/*    onClick={() => {*/}
+      {/*      setIsModalOpen(true);*/}
+      {/*    }}*/}
+      {/*  >*/}
+      {/*    dodaj nowe*/}
+      {/*  </button>*/}
+      {/*)}*/}
     </div>
   );
 };

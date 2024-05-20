@@ -1,3 +1,5 @@
+@import 'src/assets/styles/_variables.scss';
+
 .container {
   background-color: #1f1f20;
   max-width: 1000px;
@@ -12,6 +14,15 @@
   box-shadow: 12px 12px 13px -9px rgba(31, 31, 32, 1);
 }
 
+.sectionTitle {
+    font-size: 24px;
+    font-weight: 700;
+
+  @media screen and (min-width: $breakpoint-sm) {
+    font-size: 32px;
+  }
+}
+
 .eventsWrapper {
   display: flex;
   flex-direction: column;
@@ -21,6 +32,7 @@
 .monthWrapper {
   display: flex;
   flex-direction: column;
+  gap: 24px;
 }
 
 .dayWrapper {

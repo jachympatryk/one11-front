@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'; // Dodajemy useEffect i useState
 import styles from './event.module.scss';
 import { mapEventName } from '../../../../utils/mapEventName.ts';
 import { format } from 'date-fns';
-import { pl } from 'date-fns/locale';
 import { useMutation, useQueryClient } from 'react-query';
 import {
   getEvent,
@@ -13,6 +12,9 @@ import {
 import { mapAttendanceStatus } from '../../../../utils/mapAttendanceStatus.ts';
 import { useApp } from '../../app.context.tsx';
 import { AttendanceStatus, EventModel } from '../../../../models/event.ts';
+import { pl } from 'date-fns/locale'; // Import lokalizacji polskiej
+import { MdAddLocation } from 'react-icons/md';
+import { AttendanceButtons } from '../../components/attendance-buttons/attendance-buttons.tsx';
 
 export const Event = () => {
   const { userSelectedFunctionality } = useApp();
@@ -83,16 +85,6 @@ export const Event = () => {
   if (isLoading) return <div>Ładowanie...</div>;
   if (isError || !eventData) return <div>Błąd ładowania danych eventu.</div>;
 
-  const eventStart = format(
-    new Date(eventData.start_time),
-    'yyyy-MM-dd HH:mm',
-    { locale: pl }
-  );
-
-  const eventEnd = eventData.end_time
-    ? format(new Date(eventData.end_time), 'yyyy-MM-dd HH:mm', { locale: pl })
-    : 'n/d';
-
   interface AttendanceMap {
     [playerId: number]: AttendanceStatus;
   }
@@ -114,53 +106,70 @@ export const Event = () => {
     );
   }
 
-  console.log('attendanceMap');
-  console.log(currentPlayerAttendance);
+  const handleLocation = () => {
+    window.open(eventData.location?.map_pin, '_blank');
+  };
+
+  const formatDayName = (dateString: Date) =>
+    format(dateString, 'EEEE', { locale: pl });
+
+  const formatDate = (dateString: Date) => format(dateString, 'dd-MM-yyyy');
+
+  const formatTime = (dateString: Date) => format(dateString, 'HH:mm');
+
+  const eventStartDate = formatDate(eventData.start_time);
+  const eventStartTime = formatTime(eventData.start_time);
+  const eventStartDay = formatDayName(eventData.start_time);
 
   return (
     <div className={styles.container}>
       <div className={styles.eventDetails}>
-        <h3>{mapEventName(eventData.event_type)}</h3>
         <div>
-          <p>{eventStart}</p> - <p>{eventEnd}</p>
+          <h3>{mapEventName(eventData.event_type).toUpperCase()}</h3>
+          <p>
+            {eventStartDate} <span>{eventStartDay.toUpperCase()}</span>
+          </p>
         </div>
+        <p className={styles.time}>{eventStartTime}</p>
+        <button onClick={handleLocation}>
+          <MdAddLocation className={styles.icon} />
+          <p>{eventData.location.name}</p>
+        </button>
       </div>
 
-      {userIsPlayer && (
-        <div>
-          <p>
-            Twój status:{' '}
-            {mapAttendanceStatus(currentPlayerAttendance?.status as string)}
-          </p>
-          <button onClick={() => changeAttendanceStatus('CONFIRMED')}>
-            Potwierdź
-          </button>
-          <button onClick={() => changeAttendanceStatus('ABSENT')}>
-            Nieobecny
-          </button>
-          <button onClick={() => changeAttendanceStatus('LATE')}>
-            Spóźniony
-          </button>
+      <AttendanceButtons event={eventData} />
+
+      {eventData.description_before && (
+        <div className={styles.eventDescription}>
+          <h2>Opis przed</h2>
+          <p>{eventData.description_before}</p>
+        </div>
+      )}
+
+      {eventData.description_after && (
+        <div className={styles.eventDescription}>
+          <h2>Opis po</h2>
+          <p>{eventData.description_after}</p>
         </div>
       )}
 
       <div className={styles.eventDescription}>
-        <h2>Opis przed</h2>
-        <p>{eventData.description_before}</p>
-        <h2>Opis po</h2>
+        <h2>Opis Prywatny</h2>
         <p>{eventData.description_after}</p>
       </div>
 
-      <div className={styles.attendanceList}>
+      <div className={styles.attendanceWrapper}>
         <h2>Lista Obecności</h2>
-        {players.map((player) => (
-          <div key={player.id} className={styles.player}>
-            <p>
-              {player.name} {player.surname}
-            </p>
-            <p>Status: {mapAttendanceStatus(attendanceMap[player.id])}</p>
-          </div>
-        ))}
+        <div className={styles.attendanceList}>
+          {players.map((player) => (
+            <div key={player.id} className={styles.player}>
+              <p>
+                {player.name} {player.surname}
+              </p>
+              <p>Status: {mapAttendanceStatus(attendanceMap[player.id])}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

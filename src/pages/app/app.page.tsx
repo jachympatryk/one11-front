@@ -6,23 +6,21 @@ import { Dashboard } from './pages/dashboard/dashboard.tsx';
 import { Calendar } from './pages/calendar/calendar.tsx';
 
 import useIsMobile from '../../hooks/useIsMobile.tsx';
-import { useApp } from './app.context.tsx';
 import { Players } from './pages/players/players.tsx';
 import { Event } from './pages/event/event.tsx';
 import { Chat } from './pages/chat/chat.tsx';
 import { Lineup } from './pages/lineup/lineup.tsx';
 import { LineupDetails } from './pages/lineup/lineup-details/lineup-details.tsx';
+import { FullScreenLoader } from './components/full-screen-loader/full-screen-loader.tsx';
+import { useDetails } from './details.context.tsx';
+import { Table } from './pages/table/table.tsx';
 
 export const AppPage = () => {
   const isMobile = useIsMobile();
 
-  const { isDataLoading } = useApp();
+  const { teamDataFetch } = useDetails();
 
-  // useEffect(() => {
-  //     navigate('/app/dashboard');
-  // }, [userSelectedFunctionality]);
-
-  if (isDataLoading) return <div>loading</div>;
+  if (!teamDataFetch) return <FullScreenLoader />;
 
   return (
     <div className={styles.wrapper}>
@@ -31,6 +29,7 @@ export const AppPage = () => {
       <div className={styles.content}>
         <Routes>
           <Route path="dashboard" element={<Dashboard />} />
+          <Route path="table" element={<Table />} />
           <Route path="calendar" element={<Calendar />} />
           <Route path="event/:eventId" element={<Event />} />
           <Route path="players" element={<Players />} />

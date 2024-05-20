@@ -4,13 +4,11 @@
   width: 100%;
   height: 100%;
   display: flex;
-  flex-direction: column;
-  gap: 64px;
-  align-items: center;
-  overflow-y: auto;
-  padding: 16px;
+  padding: 32px;
 
   @media screen and (min-width: $breakpoint-sm) {
     padding: 64px;
+    justify-content: center;
+    align-items: center;
   }
 }

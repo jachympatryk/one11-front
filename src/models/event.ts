@@ -1,3 +1,5 @@
+import { LocationModel } from './location.tsx';
+
 export interface EventModel {
   id: number;
   name: string;
@@ -14,6 +16,7 @@ export interface EventModel {
   description_after?: string; // Opcjonalny
   teamId: number; // Zakładam, że to jest zawsze wymagane, nie ma znaku zapytania
   attendances: AttendanceModel[];
+  location: LocationModel;
 }
 
 export type CreateEventModel = Omit<EventModel, 'id' | 'attendances'>;

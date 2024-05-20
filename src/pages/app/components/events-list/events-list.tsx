@@ -1,6 +1,14 @@
-import { useDetails } from '../../details.context.tsx';
-import { format, parseISO } from 'date-fns';
+import React, { useEffect, useState } from 'react';
+import {
+  parseISO,
+  format,
+  isSameMonth,
+  startOfWeek,
+  addWeeks,
+  isSameWeek,
+} from 'date-fns';
 import { pl } from 'date-fns/locale';
+import { useDetails } from '../../details.context.tsx';
 import styles from './events-list.module.scss';
 import { monthNames } from '../../../../constants/data.ts';
 import { EventModel } from '../../../../models/event.ts';
@@ -14,56 +22,110 @@ interface EventsByMonth {
   [month: string]: EventsByDay;
 }
 
-export const EventsList = () => {
+interface EventsListProps {
+  currentMonth: Date;
+  setCurrentMonth: React.Dispatch<React.SetStateAction<Date>>;
+  isCurrentWeek?: boolean;
+  isNextWeek?: boolean;
+}
+
+export const EventsList: React.FC<EventsListProps> = ({
+  currentMonth,
+  isCurrentWeek,
+  isNextWeek,
+}) => {
   const { events } = useDetails();
 
-  const eventsGroupedByMonthAndDay: EventsByMonth =
-    events.reduce<EventsByMonth>((acc, event) => {
-      const month = format(event.start_time, 'yyyy-MM', {
-        locale: pl,
-      });
-      const day = format(event.start_time, 'EEEE dd.MM', {
-        locale: pl,
-      });
+  const [eventsGroupedByMonthAndDay, setEventsGroupedByMonthAndDay] =
+    useState<EventsByMonth>({});
 
-      acc[month] = acc[month] || {};
-      acc[month][day] = acc[month][day] || [];
-      acc[month][day].push(event);
-      return acc;
-    }, {});
+  useEffect(() => {
+    const currentWeekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
+    const nextWeekStart = addWeeks(currentWeekStart, 1);
+
+    const filteredEvents = events.filter((event) => {
+      const eventDate = event?.start_time;
+      if (isCurrentWeek) {
+        return isSameWeek(eventDate, currentWeekStart, { weekStartsOn: 1 });
+      } else if (isNextWeek) {
+        return isSameWeek(eventDate, nextWeekStart, { weekStartsOn: 1 });
+      }
+      return isSameMonth(eventDate, currentMonth);
+    });
+
+    const newEventsGroupedByMonthAndDay: EventsByMonth =
+      filteredEvents.reduce<EventsByMonth>((acc, event) => {
+        const month = format(event.start_time, 'yyyy-MM', { locale: pl });
+        const day = format(event.start_time, 'EEEE dd.MM', { locale: pl });
+
+        acc[month] = acc[month] || {};
+        acc[month][day] = acc[month][day] || [];
+        acc[month][day].push(event);
+        return acc;
+      }, {});
+
+    setEventsGroupedByMonthAndDay(newEventsGroupedByMonthAndDay);
+  }, [events, currentMonth, isCurrentWeek, isNextWeek]);
+
+  if (Object.keys(eventsGroupedByMonthAndDay).length === 0) {
+    return <div className={styles.noEvents}>Brak wydarzeń do wyświetlenia</div>;
+  }
 
   const sortedMonths = Object.keys(eventsGroupedByMonthAndDay).sort();
 
+  const planName = isCurrentWeek
+    ? 'Plan na bieżący tydzień'
+    : isNextWeek
+      ? 'Plan na następny tydzień'
+      : 'Plan na miesiąc';
+
   return (
     <div className={styles.container}>
-      <p>Plan</p>
+      <p className={styles.sectionTitle}>{planName}</p>
       <div className={styles.eventsWrapper}>
         {sortedMonths.map((month) => {
-          const date = parseISO(`${month}-01`); // Tworzymy datę z pierwszego dnia miesiąca, aby móc wykorzystać getMonth()
-          const monthName = monthNames[date.getMonth() + 1];
-          const year = date.getFullYear(); // Pobieramy rok
+          const date = parseISO(`${month}-01`);
+          const monthName = monthNames[date.getMonth()];
+          const year = date.getFullYear();
 
           return (
             <div key={month} className={styles.monthWrapper}>
-              <p className={styles.monthName}>{`${monthName} ${year}`}</p>{' '}
+              {!isCurrentWeek && !isNextWeek && (
+                <p className={styles.monthName}>{`${monthName} ${year}`}</p>
+              )}
               {Object.keys(eventsGroupedByMonthAndDay[month])
-                .sort()
-                .map((day) => (
-                  <div key={day} className={styles.dayWrapper}>
-                    <p className={styles.dayName}>{day}</p>
-                    <ul className={styles.eventsList}>
-                      {eventsGroupedByMonthAndDay[month][day]
-                        .sort(
-                          (a, b) =>
-                            new Date(a.start_time).getTime() -
-                            new Date(b.start_time).getTime()
-                        )
-                        .map((event) => (
-                          <EventCard event={event} key={event.id} />
-                        ))}
-                    </ul>
-                  </div>
-                ))}
+                .map((dayKey) => {
+                  const dayNumberMatch = dayKey.match(/\d+/);
+                  if (!dayNumberMatch) return null;
+                  const dayNumber = dayNumberMatch[0];
+                  const date = parseISO(`${month}-${dayNumber}`);
+                  return { dayKey, date }; // Tworzymy obiekt z dayKey i date
+                })
+                .filter(
+                  (item): item is { dayKey: string; date: Date } =>
+                    item !== null
+                ) // Filtr, który potwierdza, że item nie jest null
+                .sort((a, b) => a.date.getTime() - b.date.getTime()) // Sortujemy tylko obiekty z pełnymi właściwościami
+                .map(
+                  (
+                    { dayKey } // Destructuring obiektu, który na pewno nie jest null
+                  ) => (
+                    <div key={dayKey} className={styles.dayWrapper}>
+                      <p className={styles.dayName}>{dayKey}</p>
+                      <ul className={styles.eventsList}>
+                        {eventsGroupedByMonthAndDay[month][dayKey]
+                          .sort(
+                            (a, b) =>
+                              new Date(a.start_time).getTime() -
+                              new Date(b.start_time).getTime()
+                          )
+                          .map((event) => (
+                            <EventCard event={event} key={event.id} />
+                          ))}
+                      </ul>
+                    </div>
+                  )
+                )}
             </div>
           );
         })}

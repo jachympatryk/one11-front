@@ -1,71 +1,37 @@
-import { useMutation, useQueryClient } from 'react-query';
-import { updateAttendance } from '../../../../server/event/event.server.ts';
 import { Link } from 'react-router-dom';
 import { mapEventName } from '../../../../utils/mapEventName.ts';
 import { format } from 'date-fns';
-import { AttendanceStatus, EventModel } from '../../../../models/event.ts';
+import { EventModel } from '../../../../models/event.ts';
 import styles from './event-card.module.scss';
-import { pl } from 'date-fns/locale';
-import { useDetails } from '../../details.context.tsx';
-import { useApp } from '../../app.context.tsx';
+import { MdAddLocation } from 'react-icons/md';
+import { AttendanceButtons } from '../attendance-buttons/attendance-buttons.tsx';
 
 export const EventCard = ({ event }: { event: EventModel }) => {
-  const queryClient = useQueryClient();
-  const { userIsPlayer } = useDetails();
-  const { userSelectedFunctionality } = useApp();
+  console.log(event);
 
-  const mutation = useMutation(
-    ({
-      eventId,
-      playerId,
-      status,
-    }: {
-      eventId: number;
-      playerId: number;
-      status: AttendanceStatus;
-    }) => updateAttendance(eventId, playerId, status),
-    {
-      onSuccess: () => {
-        // Tutaj możemy zaktualizować cache lub ponownie załadować dane
-        queryClient.invalidateQueries(['event', event.id.toString()]).then();
-      },
-    }
-  );
+  const formatTime = (dateString: Date) => format(dateString, 'HH:mm');
 
-  const changeAttendanceStatus = (newStatus: AttendanceStatus) => {
-    console.log(newStatus);
-    mutation.mutate({
-      eventId: event.id,
-      playerId: userSelectedFunctionality?.id || 0,
-      status: newStatus,
-    });
-  };
+  const eventStartTime = formatTime(event.start_time);
 
   return (
     <div className={styles.container}>
       <Link
         to={`/app/event/${event.id}`}
-        datatype={event.event_type}
+        data-type={event.event_type}
         className={styles.event}
       >
-        <p>{mapEventName(event.event_type)}</p>
+        <p className={styles.eventName}>{mapEventName(event.event_type)}</p>
+        <p className={styles.eventTime}>{eventStartTime}</p>
       </Link>
-      <div>
-        <p>{format(event.start_time, 'yyyy-MM-dd HH:mm', { locale: pl })}</p>
-      </div>
-      {userIsPlayer && (
-        <div>
-          <button onClick={() => changeAttendanceStatus('CONFIRMED')}>
-            Obecny
-          </button>
-          <button onClick={() => changeAttendanceStatus('ABSENT')}>
-            Nieobecny
-          </button>
-          <button onClick={() => changeAttendanceStatus('LATE')}>
-            Spoźniony
-          </button>
+
+      <div className={styles.details}>
+        <div className={styles.location}>
+          <MdAddLocation />
+          <p>{event.location.name}</p>
         </div>
-      )}
+      </div>
+
+      <AttendanceButtons event={event} />
     </div>
   );
 };
