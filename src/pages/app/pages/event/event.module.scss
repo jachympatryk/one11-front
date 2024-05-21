@@ -2,19 +2,16 @@
 
 .container {
   width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  align-items: center;
   overflow-y: auto;
   padding: 16px;
+  max-width: 1200px;
+  margin: auto;
 
   @media screen and (min-width: $breakpoint-sm) {
     padding: 64px;
-    display: grid;
-    grid-template-columns: 70% 30%;
-    grid-template-rows: 100px 1fr;
   }
 }
 
@@ -29,13 +26,15 @@
   padding: 16px;
 }
 
-
 .eventDetails {
   @extend  .eventBox;
 
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+    display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
   gap: 16px;
+  min-height: 130px;
 
   h3 {
     justify-self: center;
@@ -62,8 +61,8 @@
 
 
   @media screen and (min-width: $breakpoint-sm) {
-    grid-column: 1 / 2;
-    grid-row: 1 / 2;
+    flex-direction: row;
+
   }
 }
 
@@ -78,6 +77,19 @@ font-size: 64px;
   margin: 0;
 padding: 0;
   line-height: 64px;
+}
+
+.matchDetails {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo {
+  width: 80px;
+  height: 80px;
+  background-color: #fff;
 }
 
 .eventDescription {
@@ -114,6 +126,35 @@ padding: 0;
   }
 }
 
+.lineup {
+  @extend  .eventBox;
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 500px;
+}
+
 .player {
   margin: 16px 0;
+}
+
+.floatingButton {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  background-color: #4253ac;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  font-size: 32px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  -webkit-box-shadow: 12px 12px 13px -9px rgba(31, 31, 32, 1);
+  -moz-box-shadow: 12px 12px 13px -9px rgba(31, 31, 32, 1);
+  box-shadow: 12px 12px 13px -9px rgba(31, 31, 32, 1);
 }

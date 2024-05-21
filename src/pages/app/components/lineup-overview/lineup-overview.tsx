@@ -1,7 +1,6 @@
 import styles from './lineup-overview.module.scss';
 import { useDetails } from '../../details.context.tsx';
 import { TeamLineupModel } from '../../../../models/lineup.ts';
-import html2canvas from 'html2canvas';
 
 export const LineupOverview = ({ lineup }: { lineup: TeamLineupModel }) => {
   const { players } = useDetails();
@@ -11,21 +10,21 @@ export const LineupOverview = ({ lineup }: { lineup: TeamLineupModel }) => {
     (_, index) => `pos-${index + 1}`
   );
 
-  const downloadImage = async () => {
-    const fieldElement = document.querySelector(
-      `.${styles.field}`
-    ) as HTMLElement;
-    if (fieldElement) {
-      const canvas = await html2canvas(fieldElement);
-      const image = canvas
-        .toDataURL('image/png')
-        .replace('image/png', 'image/octet-stream');
-      const link = document.createElement('a');
-      link.download = lineup.name; // Zapewnij, że lineup ma właściwość name
-      link.href = image;
-      link.click();
-    }
-  };
+  // const downloadImage = async () => {
+  //   const fieldElement = document.querySelector(
+  //     `.${styles.field}`
+  //   ) as HTMLElement;
+  //   if (fieldElement) {
+  //     const canvas = await html2canvas(fieldElement);
+  //     const image = canvas
+  //       .toDataURL('image/png')
+  //       .replace('image/png', 'image/octet-stream');
+  //     const link = document.createElement('a');
+  //     link.download = lineup.name; // Zapewnij, że lineup ma właściwość name
+  //     link.href = image;
+  //     link.click();
+  //   }
+  // };
 
   if (players.length > 0 && lineup)
     return (
@@ -62,9 +61,6 @@ export const LineupOverview = ({ lineup }: { lineup: TeamLineupModel }) => {
           <div className={styles.penaltyAreaLeft}></div>
           <div className={styles.penaltyAreaRight}></div>
         </div>
-        <button onClick={downloadImage} className={styles.downloadButton}>
-          Pobierz obraz składu
-        </button>
       </div>
     );
 

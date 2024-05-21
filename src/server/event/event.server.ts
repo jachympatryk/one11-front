@@ -21,7 +21,7 @@ export const createEvent = async (
   }
 };
 
-export const getEvent = async (eventId: number): Promise<EventModel | null> => {
+export const getEvent = async (eventId: number): Promise<EventModel> => {
   try {
     const response = await fetchFromBackend<EventModel>(`events/${eventId}`, {
       method: 'GET',
@@ -30,7 +30,6 @@ export const getEvent = async (eventId: number): Promise<EventModel | null> => {
     return response;
   } catch (error) {
     console.error('Failed to retrieve event:', error);
-    return null;
   }
 };
 

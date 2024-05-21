@@ -20,6 +20,32 @@
  }
 }
 
+.container:hover {
+  color: #fff;
+}
+
+.headerWrapper {
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+}
+
 .gameInTurn {
  text-align: left;
+}
+
+.detailsWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+ justify-content: center;
+ align-items: center;
+}
+
+.image {
+ width: 100px;
+ height: 100px;
+ background-color: #fff;
+ color: #000;
+ border-radius: 4px;
 }

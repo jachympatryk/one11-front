@@ -26,16 +26,18 @@ export const FutureMatch = ({ gameInTurn }: { gameInTurn: number }) => {
 
   return (
     <Link to={`/app/event/${nthMatchEvent.id}`} className={styles.container}>
-      {gameInTurn === 1 && <p className={styles.gameInTurn}>Następny mecz</p>}
-      {gameInTurn >= 1 && gameInTurn !== 1 && (
-        <p className={styles.gameInTurn}>{gameInTurn} mecz</p>
-      )}
+      <div className={styles.headerWrapper}>
+        {gameInTurn === 1 && <p className={styles.gameInTurn}>Następny mecz</p>}
+        {gameInTurn >= 1 && gameInTurn !== 1 && (
+          <p className={styles.gameInTurn}>Kolejny Mecz</p>
+        )}
+        <p>{eventStartDay}</p>
+      </div>
 
       {nthMatchEvent ? (
-        <div>
-          <p>{eventStartDay}</p>
-          <p>vs Real Madryt</p>
-          <p>Madryt</p>
+        <div className={styles.detailsWrapper}>
+          <div className={styles.image}>HERB</div>
+          <p>Ks Nowa Jastrząbka-Żukowice</p>
           <AttendanceButtons event={nthMatchEvent} />
         </div>
       ) : (

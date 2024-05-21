@@ -1,14 +1,16 @@
 import { LocationModel } from './location.tsx';
+import { TeamLineupModel } from './lineup.ts';
 
 export interface EventModel {
   id: number;
   name: string;
-  event_type: EventType; // Tutaj zakładam, że EventType to wcześniej zdefiniowany typ lub enum
+  event_type: EventType; // Tutaj zakładam, że to wcześniej zdefiniowany typ lub enum
   created_at: Date;
   created_by: string;
   start_time: Date;
   end_time?: Date; // Oznaczony jako opcjonalny (?), ponieważ posiada znak zapytania w definicji modelu
-  line_up?: string; // Opcjonalny
+  lineup?: TeamLineupModel; // Opcjonalny
+  lineupId?: number;
   opponent?: string; // Opcjonalny
   collection_time?: Date; // Opcjonalny
   own_transport?: boolean; // Opcjonalny

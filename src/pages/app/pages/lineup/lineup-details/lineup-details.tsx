@@ -5,12 +5,18 @@ import { getTeamLineupById } from '../../../../../server/team/team.server.ts';
 import { useApp } from '../../../app.context.tsx';
 import styles from './lineup-details.module.scss';
 
-export const LineupDetails = () => {
+export const LineupDetails = ({
+  propsLineupId,
+}: {
+  propsLineupId?: number;
+}) => {
   const { userSelectedFunctionality } = useApp();
   const { lineupId } = useParams();
   const navigate = useNavigate(); // Używamy hooka useNavigate
 
-  const lineupNumeric = parseInt(String(lineupId as unknown as number));
+  const lineupNumeric = propsLineupId
+    ? propsLineupId
+    : parseInt(String(lineupId as unknown as number));
 
   console.log(userSelectedFunctionality);
 
