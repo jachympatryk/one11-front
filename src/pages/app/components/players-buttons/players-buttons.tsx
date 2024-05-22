@@ -9,12 +9,12 @@ interface PositionOption {
 }
 
 export const PlayersButtons = () => {
-  const { players, playersFiltered, setPlayersFiltered } = useDetails();
+  const { players } = useDetails();
 
   // const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const isActive = (filter: PlayerPosition | '') =>
-    playersFiltered === filter ? styles.activeButton : '';
+  // const isActive = (filter: PlayerPosition | '') =>
+  //   playersFiltered === filter ? styles.activeButton : '';
 
   const hasPlayers = (position: PlayerPosition | '') =>
     position === ''
@@ -45,8 +45,8 @@ export const PlayersButtons = () => {
         {positions.map(({ id, name }) => (
           <button
             key={id}
-            onClick={() => setPlayersFiltered(id)}
-            className={`${styles.button} ${isActive(id)}`}
+            // onClick={() => setPlayersFiltered(id)}
+            // className={`${styles.button} ${isActive(id)}`}
             disabled={!anyPlayers || !hasPlayers(id)}
           >
             {name}

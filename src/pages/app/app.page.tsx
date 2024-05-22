@@ -1,11 +1,9 @@
 import { Routes, Route } from 'react-router-dom';
 import { SideMenu } from './components/side-menu/side-menu.tsx';
-import { UserFunctionalitySelect } from './components/user-functionality-select/user-functionality-select.tsx';
 import styles from './app.module.scss';
 import { Dashboard } from './pages/dashboard/dashboard.tsx';
 import { Calendar } from './pages/calendar/calendar.tsx';
 
-import useIsMobile from '../../hooks/useIsMobile.tsx';
 import { Players } from './pages/players/players.tsx';
 import { Event } from './pages/event/event.tsx';
 import { Chat } from './pages/chat/chat.tsx';
@@ -16,16 +14,13 @@ import { useDetails } from './details.context.tsx';
 import { Table } from './pages/table/table.tsx';
 
 export const AppPage = () => {
-  const isMobile = useIsMobile();
-
   const { teamDataFetch } = useDetails();
 
   if (!teamDataFetch) return <FullScreenLoader />;
 
   return (
     <div className={styles.wrapper}>
-      {!isMobile && <SideMenu />}
-      <UserFunctionalitySelect />
+      <SideMenu />
       <div className={styles.content}>
         <Routes>
           <Route path="dashboard" element={<Dashboard />} />

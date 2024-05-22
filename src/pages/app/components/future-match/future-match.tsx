@@ -3,10 +3,11 @@ import { useDetails } from '../../details.context.tsx';
 import styles from './future-match.module.scss';
 import { pl } from 'date-fns/locale';
 import { Link } from 'react-router-dom';
-import { AttendanceButtons } from '../attendance-buttons/attendance-buttons.tsx';
 
 export const FutureMatch = ({ gameInTurn }: { gameInTurn: number }) => {
   const { events } = useDetails();
+
+  if (events.length === 0) return;
 
   const getNthMatchEvent = () => {
     const matchEvents = events.filter((event) => event.event_type === 'MATCH');
@@ -24,6 +25,8 @@ export const FutureMatch = ({ gameInTurn }: { gameInTurn: number }) => {
 
   const eventStartDay = formatDayName(nthMatchEvent.start_time);
 
+  if (!nthMatchEvent) return;
+
   return (
     <Link to={`/app/event/${nthMatchEvent.id}`} className={styles.container}>
       <div className={styles.headerWrapper}>
@@ -38,7 +41,6 @@ export const FutureMatch = ({ gameInTurn }: { gameInTurn: number }) => {
         <div className={styles.detailsWrapper}>
           <div className={styles.image}>HERB</div>
           <p>Ks Nowa Jastrząbka-Żukowice</p>
-          <AttendanceButtons event={nthMatchEvent} />
         </div>
       ) : (
         <p>No match event found for the specified turn.</p>

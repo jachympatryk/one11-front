@@ -19,14 +19,14 @@ export const Messages = ({
   const endOfMessagesRef = useRef<HTMLDivElement>(null);
 
   const { userSelectedFunctionality } = useApp();
-  const { userIsPlayer } = useDetails();
+  const { isUserPlayer } = useDetails();
 
   const messageMutation = useMutation(
     () =>
       addMessage(
         selectedConversation?.id,
         text,
-        userIsPlayer,
+        isUserPlayer,
         userSelectedFunctionality?.id as number
       ),
     {

@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDetails } from '../../details.context.tsx';
 import styles from './players-list.module.scss';
 import { mapPositionName } from '../../../../utils/mapPositionName.ts';
 import { PlayerPosition } from '../../../../models/player.ts';
 
 export const PlayersList: React.FC = () => {
-  const { players, playersFiltered } = useDetails();
+  const { players } = useDetails();
+
+  const [playersFiltered] = useState<PlayerPosition | ''>('');
 
   const positionOrder: { [key in PlayerPosition]: number } = {
     GOALKEEPER: 1,

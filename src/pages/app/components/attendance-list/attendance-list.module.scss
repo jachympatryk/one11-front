@@ -1,0 +1,49 @@
+@import 'src/assets/styles/_variables.scss';
+
+.attendanceWrapper {
+  width: 100%;
+  background-color: #1F1F20;
+  -webkit-box-shadow: 12px 12px 13px -9px rgba(31, 31, 32, 1);
+  -moz-box-shadow: 12px 12px 13px -9px rgba(31, 31, 32, 1);
+  box-shadow: 12px 12px 13px -9px rgba(31, 31, 32, 1);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  height: max-content;
+
+  @media screen and (min-width: $breakpoint-sm) {
+  }
+}
+
+.statusSection {
+display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background-color: #28282A;
+  border-radius: 16px;
+  padding: 16px;
+
+  h3 {
+    font-size: 20px;
+  }
+}
+
+.playersWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.player {
+  text-align: left;
+
+  @media screen and (min-width: $breakpoint-sm) {
+    text-align: center;
+  }
+
+  p {
+    font-size: 18px;
+  }
+}

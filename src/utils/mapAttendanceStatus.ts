@@ -1,16 +1,16 @@
 export const mapAttendanceStatus = (status: string): string => {
   switch (status) {
     case 'CONFIRMED':
-      return 'potwierdzony';
+      return 'Potwierdzony';
     case 'ABSENT':
-      return 'nieobecny';
+      return 'Nieobecny';
     case 'LATE':
-      return 'spóźniony';
+      return 'Spóźniony';
     case 'EXCUSED':
-      return 'usprawiedliwiony';
+      return 'Usprawiedliwiony';
     case 'PENDING':
-      return 'oczekujący';
+      return 'Oczekujący';
     default:
-      return 'nieznany';
+      return 'Nieznany';
   }
 };

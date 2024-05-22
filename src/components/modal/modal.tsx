@@ -6,12 +6,14 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  title?: string;
 }
 
 export const ModalComponent: React.FC<ModalProps> = ({
   isOpen,
   onClose,
   children,
+  title,
 }) => {
   const [showModal, setShowModal] = useState(isOpen);
   const [shouldRender, setShouldRender] = useState(isOpen);
@@ -66,7 +68,7 @@ export const ModalComponent: React.FC<ModalProps> = ({
             onClick={handleContentClick}
           >
             <div className={styles.header}>
-              <p>Modal title</p>
+              <p>{title ? title : ''}</p>
               <button
                 className={styles.closeButton}
                 onClick={handleButtonClick}

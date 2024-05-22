@@ -1,46 +1,38 @@
 import { useParams } from 'react-router-dom';
-import { useDetails } from '../../details.context.tsx';
 import { useState } from 'react';
 import styles from './event.module.scss';
 import { mapEventName } from '../../../../utils/mapEventName.ts';
 import { format } from 'date-fns';
 import { getEvent } from '../../../../server/event/event.server.ts';
-import { mapAttendanceStatus } from '../../../../utils/mapAttendanceStatus.ts';
-import { AttendanceStatus } from '../../../../models/event.ts';
 import { pl } from 'date-fns/locale';
-import { MdAdd, MdAddLocation } from 'react-icons/md';
-import { AttendanceButtons } from '../../components/attendance-buttons/attendance-buttons.tsx';
+import { MdAddLocation } from 'react-icons/md';
 import { LineupOverview } from '../../components/lineup-overview/lineup-overview.tsx';
 import { useQuery } from 'react-query';
-
-interface AttendanceMap {
-  [playerId: number]: AttendanceStatus;
-}
+import { AttendanceList } from '../../components/attendance-list/attendance-list.tsx';
+import { RiFileListLine } from 'react-icons/ri';
 
 export const Event = () => {
   const { eventId } = useParams();
-  const { players } = useDetails();
 
   const [isAttendanceListOpen, setIsAttendanceListOpen] =
     useState<boolean>(false);
 
   const eventNumber = parseInt(String(eventId as unknown as number));
 
-  const { data: event, isSuccess } = useQuery(
-    ['user', eventNumber],
-    () => getEvent(eventNumber),
-    { enabled: !!eventNumber }
-  );
+  const {
+    data: event,
+    isSuccess,
+    refetch,
+  } = useQuery(['user', eventNumber], () => getEvent(eventNumber), {
+    enabled: !!eventNumber,
+  });
 
-  if (!isSuccess && !event) return <p>asd</p>;
-
-  const attendanceMap: AttendanceMap = event.attendances.reduce<AttendanceMap>(
-    (acc, curr) => {
-      acc[curr.playerId] = curr.status;
-      return acc;
-    },
-    {} as AttendanceMap
-  );
+  if (!isSuccess && !event)
+    return (
+      <div className={styles.error}>
+        <p>Ładowanie...</p>
+      </div>
+    );
 
   const handleLocation = () => {
     window.open(event.location?.map_pin, '_blank');
@@ -66,23 +58,11 @@ export const Event = () => {
   return (
     <div className={styles.container}>
       <button onClick={handleAttendanceList} className={styles.floatingButton}>
-        <MdAdd />
+        <RiFileListLine />
       </button>
 
       {isAttendanceListOpen && (
-        <div className={styles.attendanceWrapper}>
-          <h2>Lista Obecności</h2>
-          <div className={styles.attendanceList}>
-            {players.map((player) => (
-              <div key={player.id} className={styles.player}>
-                <p>
-                  {player.name} {player.surname}
-                </p>
-                <p>Status: {mapAttendanceStatus(attendanceMap[player.id])}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+        <AttendanceList event={event} refetch={refetch} />
       )}
 
       {!isAttendanceListOpen && (
@@ -106,8 +86,6 @@ export const Event = () => {
               <p>{event.location.name}</p>
             </button>
           </div>
-
-          <AttendanceButtons event={event} />
 
           {event.description_before && (
             <div className={styles.eventDescription}>

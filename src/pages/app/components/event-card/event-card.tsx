@@ -4,7 +4,6 @@ import { format } from 'date-fns';
 import { EventModel } from '../../../../models/event.ts';
 import styles from './event-card.module.scss';
 import { MdAddLocation } from 'react-icons/md';
-import { AttendanceButtons } from '../attendance-buttons/attendance-buttons.tsx';
 
 export const EventCard = ({ event }: { event: EventModel }) => {
   console.log(event);
@@ -30,8 +29,6 @@ export const EventCard = ({ event }: { event: EventModel }) => {
           <p>{event.location.name}</p>
         </div>
       </div>
-
-      <AttendanceButtons event={event} />
     </div>
   );
 };

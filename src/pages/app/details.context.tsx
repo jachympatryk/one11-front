@@ -9,17 +9,15 @@ import { useApp } from './app.context.tsx';
 import { useQuery } from 'react-query';
 import { getTeamDetails } from '../../server/team/team.server.ts';
 import { EventModel } from '../../models/event.ts';
-import { PlayerModel, PlayerPosition } from '../../models/player.ts';
+import { PlayerModel } from '../../models/player.ts';
 import { TableModel } from '../../models/table.ts';
 import { TeamDetailsResponse } from '../../models/team.ts';
 
 interface DetailsContextType {
   events: EventModel[];
   players: PlayerModel[];
-  playersFiltered: PlayerPosition | '';
-  setPlayersFiltered: React.Dispatch<React.SetStateAction<PlayerPosition | ''>>;
-  userIsPlayer: boolean;
   tableData: TableModel[];
+  isUserPlayer: boolean;
   isTeamDetailsLoading: boolean;
   refetchTeamDetails: () => void;
   teamDataFetch: boolean;
@@ -35,11 +33,8 @@ export const DetailsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [events, setEvents] = useState<EventModel[]>([]);
   const [players, setPlayers] = useState<PlayerModel[]>([]);
   const [tableData, setTableData] = useState<TableModel[]>([]);
-  const [playersFiltered, setPlayersFiltered] = useState<PlayerPosition | ''>(
-    ''
-  );
-  const [userIsPlayer, setUserIsPlayer] = useState<boolean>(false);
   const [teamDataFetch, setTeamDataFetch] = useState<boolean>(false);
+  const [isUserPlayer, setIsUserPlayer] = useState<boolean>(false);
 
   const {
     data: teamDetails,
@@ -59,52 +54,32 @@ export const DetailsProvider: React.FC<{ children: React.ReactNode }> = ({
   console.log(teamDetails);
 
   useEffect(() => {
-    if (teamDetails) {
-      if (teamDetails) {
-        setTeamDataFetch(true);
-      }
+    if (userSelectedFunctionality) {
+      setIsUserPlayer('position' in userSelectedFunctionality);
+    }
+  }, [userSelectedFunctionality]);
 
+  useEffect(() => {
+    if (teamDetails) {
+      setTeamDataFetch(true);
       setEvents(teamDetails.events);
       setPlayers(teamDetails.players);
       setTableData(teamDetails.table);
     }
   }, [teamDetails]);
 
-  useEffect(() => {
-    setPlayersFiltered('');
-
-    if (
-      userSelectedFunctionality &&
-      'position' in userSelectedFunctionality &&
-      userSelectedFunctionality.position
-    ) {
-      setUserIsPlayer(true);
-    } else {
-      setUserIsPlayer(false);
-    }
-  }, [userSelectedFunctionality]);
-
   const value = useMemo(
     () => ({
       teamDetails,
       events,
       players,
-      playersFiltered,
-      setPlayersFiltered,
       tableData,
-      userIsPlayer,
+      isUserPlayer,
       isTeamDetailsLoading,
       refetchTeamDetails,
       teamDataFetch,
     }),
-    [
-      userSelectedFunctionality,
-      events,
-      players,
-      playersFiltered,
-      isTeamDetailsLoading,
-      userIsPlayer,
-    ]
+    [userSelectedFunctionality, events, players]
   );
 
   return (

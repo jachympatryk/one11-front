@@ -1,10 +1,9 @@
-enum FunctionaryRoleType {
-  PRESIDENT,
-  COACH,
-  MANAGEMENT,
-  OTHER,
-  HEALTHCARE,
-}
+export type FunctionaryRoleType =
+  | 'PRESIDENT'
+  | 'COACH'
+  | 'MANAGEMENT'
+  | 'OTHER'
+  | 'HEALTHCARE';
 
 export interface FunctionaryModel {
   clubId?: number;
