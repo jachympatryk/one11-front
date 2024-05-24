@@ -1,40 +1,34 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { LineupOverview } from '../../../components/lineup-overview/lineup-overview.tsx';
-import { useQuery } from 'react-query';
-import { getTeamLineupById } from '../../../../../server/team/team.server.ts';
-import { useApp } from '../../../app.context.tsx';
 import styles from './lineup-details.module.scss';
+import { useGetLineupsQuery } from '../../../../../services/lineups/lineupsApi.ts';
+import { useGetTeamPlayersQuery } from '../../../../../services/team/teamApi.ts';
+import { useUser } from '../../../../../hooks/userUser.ts';
 
 export const LineupDetails = ({
   propsLineupId,
 }: {
   propsLineupId?: number;
 }) => {
-  const { userSelectedFunctionality } = useApp();
   const { lineupId } = useParams();
-  const navigate = useNavigate(); // Używamy hooka useNavigate
+  const navigate = useNavigate();
 
   const lineupNumeric = propsLineupId
     ? propsLineupId
     : parseInt(String(lineupId as unknown as number));
 
-  console.log(userSelectedFunctionality);
-
   if (!lineupNumeric) return;
 
-  const { data: lineup } = useQuery(
-    ['teamLineup', lineupNumeric],
-    () => {
-      if (!userSelectedFunctionality?.teamId || !lineupNumeric) {
-        throw new Error('Missing teamId or lineupId');
-      }
-      return getTeamLineupById(userSelectedFunctionality.teamId, lineupNumeric);
-    },
+  const { selectedFunctionary } = useUser();
+
+  const { data: lineup } = useGetLineupsQuery(lineupNumeric, {
+    skip: !lineupNumeric,
+  });
+
+  const { data: players } = useGetTeamPlayersQuery(
+    selectedFunctionary?.teamId as number,
     {
-      enabled: !!lineupNumeric && !!userSelectedFunctionality?.teamId,
-      onError: (error) => {
-        console.error('Error fetching lineup:', error);
-      },
+      skip: !selectedFunctionary,
     }
   );
 
@@ -48,7 +42,9 @@ export const LineupDetails = ({
       <div>
         <button onClick={handleBackClick}>{'<'}</button>
       </div>
-      {lineup && <LineupOverview lineup={lineup} />}
+      {lineup && players && (
+        <LineupOverview lineup={lineup} players={players} />
+      )}
     </div>
   );
 };

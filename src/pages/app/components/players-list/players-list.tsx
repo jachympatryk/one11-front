@@ -1,13 +1,22 @@
-import React, { useState } from 'react';
-import { useDetails } from '../../details.context.tsx';
+import { useState, useMemo } from 'react';
 import styles from './players-list.module.scss';
 import { mapPositionName } from '../../../../utils/mapPositionName.ts';
-import { PlayerPosition } from '../../../../models/player.ts';
+import { PlayerModel, PlayerPosition } from '../../../../models/player.ts';
 
-export const PlayersList: React.FC = () => {
-  const { players } = useDetails();
-
+export const PlayersList = ({ players }: { players: PlayerModel[] }) => {
   const [playersFiltered] = useState<PlayerPosition | ''>('');
+
+  const playersByPosition = useMemo(() => {
+    const grouping = {} as { [key in PlayerPosition]?: typeof players };
+    players?.forEach((player) => {
+      const { position } = player;
+      if (!grouping[position]) {
+        grouping[position] = [];
+      }
+      grouping[position]?.push(player);
+    });
+    return grouping;
+  }, [players]);
 
   const positionOrder: { [key in PlayerPosition]: number } = {
     GOALKEEPER: 1,
@@ -16,26 +25,15 @@ export const PlayersList: React.FC = () => {
     STRIKER: 4,
   };
 
-  const playersByPosition = players.reduce(
-    (acc: { [key in PlayerPosition]?: typeof players }, player) => {
-      const { position } = player;
-      if (!acc[position]) {
-        acc[position] = [];
-      }
-      acc[position]!.push(player);
-      return acc;
-    },
-    {} as { [key in PlayerPosition]?: typeof players }
-  );
-
-  const filteredPositions =
-    playersFiltered !== ''
-      ? [playersFiltered]
-      : (Object.keys(playersByPosition) as PlayerPosition[]);
-
-  const sortedPositions = filteredPositions.sort(
-    (a, b) => positionOrder[a] - positionOrder[b]
-  );
+  const sortedPositions = useMemo(() => {
+    const filteredPositions =
+      playersFiltered !== ''
+        ? [playersFiltered]
+        : (Object.keys(playersByPosition) as PlayerPosition[]);
+    return filteredPositions.sort(
+      (a, b) => positionOrder[a] - positionOrder[b]
+    );
+  }, [playersByPosition, playersFiltered]);
 
   return (
     <div className={styles.container}>

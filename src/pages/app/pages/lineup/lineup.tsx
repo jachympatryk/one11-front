@@ -1,21 +1,19 @@
-import { LineupBuilder } from '../../components/lineup-builder/lineup-builder.tsx';
 import styles from './lineup.module.scss';
-import { useQuery } from 'react-query';
-import { getTeamLineups } from '../../../../server/team/team.server.ts';
-import { useApp } from '../../app.context.tsx';
 import { LineupList } from '../../components/lineup-list/lineup-list.tsx';
 import { useState } from 'react';
+import { useGetTeamLineupsQuery } from '../../../../services/team/teamApi.ts';
+import { useUser } from '../../../../hooks/userUser.ts';
+import { LineupBuilder } from '../../components/lineup-builder/lineup-builder.tsx';
 
 export const Lineup = () => {
-  const { userSelectedFunctionality } = useApp();
+  const { selectedFunctionary } = useUser();
 
   const [isAddingNew, setIsAddingNew] = useState(false);
 
-  const { data: lineups } = useQuery(
-    ['teamLineups', userSelectedFunctionality?.teamId],
-    () => getTeamLineups(userSelectedFunctionality?.teamId || 0),
+  const { data: lineups } = useGetTeamLineupsQuery(
+    selectedFunctionary?.teamId as number,
     {
-      enabled: !!userSelectedFunctionality?.teamId,
+      skip: !selectedFunctionary?.teamId,
     }
   );
 

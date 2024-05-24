@@ -1,10 +1,8 @@
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
-import { useMutation } from 'react-query';
-import { createEvent } from '../../../../server/event/event.server.ts';
-import { useApp } from '../../app.context.tsx';
-import { useDetails } from '../../details.context.tsx';
 import { CreateEventModel, EventType } from '../../../../models/event.ts';
+import { useUser } from '../../../../hooks/userUser.ts';
+import { useCreateEventMutation } from '../../../../services/events/eventApi.ts';
 
 const EventSchema = Yup.object().shape({
   name: Yup.string().required('Nazwa wydarzenia jest wymagana'),
@@ -22,22 +20,9 @@ const EventSchema = Yup.object().shape({
 });
 
 export const AddEvent = ({ closeModal }: { closeModal: () => void }) => {
-  const { userSelectedFunctionality } = useApp();
-  const { refetchTeamDetails } = useDetails();
+  const { selectedFunctionary } = useUser();
 
-  const {
-    mutateAsync: createEventMutation,
-    isLoading,
-    isError,
-  } = useMutation(createEvent, {
-    onSuccess: () => {
-      closeModal();
-      refetchTeamDetails();
-    },
-    onError: (err) => {
-      console.error('Error creating event:', err);
-    },
-  });
+  const [createEvent, { isLoading, isError }] = useCreateEventMutation();
 
   return (
     <div>
@@ -46,7 +31,7 @@ export const AddEvent = ({ closeModal }: { closeModal: () => void }) => {
         initialValues={{
           name: '',
           event_type: '' as EventType,
-          created_by: '1',
+          created_by: selectedFunctionary?.id.toString(),
           start_time: '',
           end_time: '',
           line_up: '',
@@ -55,7 +40,7 @@ export const AddEvent = ({ closeModal }: { closeModal: () => void }) => {
           own_transport: false,
           description_before: '',
           description_after: '',
-          teamId: userSelectedFunctionality?.teamId as number,
+          teamId: selectedFunctionary?.teamId as number,
         }}
         validationSchema={EventSchema}
         onSubmit={async (values, actions) => {
@@ -73,7 +58,8 @@ export const AddEvent = ({ closeModal }: { closeModal: () => void }) => {
           };
 
           try {
-            await createEventMutation(formattedValues);
+            await createEvent(formattedValues).unwrap();
+            closeModal();
             actions.resetForm();
           } catch (error) {
             console.error('Error creating event:', error);

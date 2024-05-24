@@ -1,17 +1,27 @@
-interface BackendError {
+import { BaseQueryFn } from '@reduxjs/toolkit/query';
+
+export interface BackendError {
   message: string;
   statusCode?: number;
 }
 
-const isDev = import.meta.env.VITE_REACT_APP_MODE === 'development';
+export const baseURL =
+  import.meta.env.VITE_REACT_APP_MODE === 'development'
+    ? import.meta.env.VITE_REACT_APP_DEV_URL
+    : import.meta.env.VITE_REACT_APP_PROD_URL;
 
-interface FetchOptions {
+export interface FetchOptions<T = unknown> {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
-  body?: unknown;
-  headers?: Record<string, string>;
+  body?: T;
+  headers?: HeadersInit;
 }
 
-export async function fetchFromBackend<T = never>(
+export interface ApiResponse<T> {
+  data: T;
+  error?: { message: string };
+}
+
+export async function fetchFromBackend<T>(
   endpoint: string,
   { method = 'GET', body, headers = {} }: FetchOptions = {}
 ): Promise<T> {
@@ -22,32 +32,55 @@ export async function fetchFromBackend<T = never>(
       'x-api-key': import.meta.env.VITE_REACT_APP_API_KEY,
       ...headers,
     },
+    body: body !== undefined ? JSON.stringify(body) : undefined,
   };
 
-  if (body) {
-    config.body = JSON.stringify(body);
-  }
-
-  const response = await fetch(
-    `${isDev ? import.meta.env.VITE_REACT_APP_DEV_URL : import.meta.env.VITE_REACT_APP_PROD_URL}/${endpoint}`,
-    config
-  );
+  const response = await fetch(`${baseURL}/${endpoint}`, config);
 
   if (!response.ok) {
-    let error: BackendError;
-    try {
-      const errorData: BackendError = await response.json();
-      error = {
+    const errorData = await response
+      .json()
+      .catch(() => ({ message: 'Error parsing error response' }));
+    throw new Error(
+      JSON.stringify({
+        status: response.status.toString(),
         message: errorData.message,
-        statusCode: response.status,
-      };
-    } catch {
-      error = {
-        message: 'Error fetching data',
-        statusCode: response.status,
-      };
-    }
-    throw error;
+      })
+    );
   }
-  return (await response.json()) as T;
+
+  return (await response.json()) as Promise<T>;
 }
+
+interface FetchArgs {
+  url: string;
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  body?: unknown;
+  headers?: HeadersInit;
+}
+
+interface FetchError {
+  status: string;
+  message: string;
+}
+
+export const baseQuery: BaseQueryFn<FetchArgs, unknown, FetchError> = async (
+  args
+) => {
+  try {
+    const data = await fetchFromBackend<unknown>(args.url, {
+      method: args.method,
+      body: args.body,
+      headers: args.headers,
+    });
+    return { data };
+  } catch (error) {
+    const e = error as BackendError;
+    return {
+      error: {
+        status: e.statusCode?.toString() || 'FETCH_ERROR',
+        message: e.message,
+      },
+    };
+  }
+};

@@ -78,3 +78,15 @@
         background-color: #1f1f20;
         color: #959595;
     }
+
+span[data-type="CONFIRMED"] {
+  color: #28a239 !important;
+}
+
+span[data-type="ABSENT"] {
+  color: #d63031 !important;
+}
+
+span[data-type="LATE"] {
+  color: #f39c12 !important;
+}

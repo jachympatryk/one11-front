@@ -3,51 +3,58 @@ import { useState } from 'react';
 import styles from './event.module.scss';
 import { mapEventName } from '../../../../utils/mapEventName.ts';
 import { format } from 'date-fns';
-import { getEvent } from '../../../../server/event/event.server.ts';
 import { pl } from 'date-fns/locale';
 import { MdAddLocation } from 'react-icons/md';
-import { LineupOverview } from '../../components/lineup-overview/lineup-overview.tsx';
-import { useQuery } from 'react-query';
-import { AttendanceList } from '../../components/attendance-list/attendance-list.tsx';
 import { RiFileListLine } from 'react-icons/ri';
+import { useGetEventQuery } from '../../../../services/events/eventApi.ts';
+import { useGetTeamPlayersQuery } from '../../../../services/team/teamApi.ts';
+import { AttendanceList } from '../../components/attendance-list/attendance-list.tsx';
+import { LineupOverview } from '../../components/lineup-overview/lineup-overview.tsx';
+import { useUser } from '../../../../hooks/userUser.ts';
+import { Loader } from '../../components/loader/loader.tsx';
 
 export const Event = () => {
-  const { eventId } = useParams();
+  const { eventId } = useParams<{ eventId: string }>(); // Assuming params are string typed
+  const [isAttendanceListOpen, setIsAttendanceListOpen] = useState(false);
 
-  const [isAttendanceListOpen, setIsAttendanceListOpen] =
-    useState<boolean>(false);
+  const eventNumber = eventId ? parseInt(eventId, 10) : 0;
 
-  const eventNumber = parseInt(String(eventId as unknown as number));
+  const { selectedFunctionary } = useUser();
 
   const {
     data: event,
-    isSuccess,
-    refetch,
-  } = useQuery(['user', eventNumber], () => getEvent(eventNumber), {
-    enabled: !!eventNumber,
+    isLoading: eventLoading,
+    refetch: refetchEventData,
+    isSuccess: eventSuccess,
+  } = useGetEventQuery(eventNumber, {
+    skip: eventNumber === 0,
   });
 
-  if (!isSuccess && !event)
-    return (
-      <div className={styles.error}>
-        <p>Ładowanie...</p>
-      </div>
-    );
+  const {
+    data: players,
+    isLoading: playersLoading,
+    isSuccess: playersSuccess,
+  } = useGetTeamPlayersQuery(selectedFunctionary?.teamId as number, {
+    skip: !selectedFunctionary,
+  });
+
+  if (eventLoading || playersLoading) return <Loader />;
+  if (!event || !players || !playersSuccess || !eventSuccess)
+    return <div className={styles.container}>Brak danych</div>;
 
   const handleLocation = () => {
-    window.open(event.location?.map_pin, '_blank');
+    if (event.location?.map_pin) {
+      window.open(event.location.map_pin, '_blank');
+    }
   };
 
-  const formatDayName = (dateString: Date) =>
-    format(dateString, 'EEEE', { locale: pl });
+  const formatDayName = (date: Date) => format(date, 'EEEE', { locale: pl });
+  const formatDate = (date: Date) => format(date, 'dd-MM-yyyy');
+  const formatTime = (date: Date) => format(date, 'HH:mm');
 
-  const formatDate = (dateString: Date) => format(dateString, 'dd-MM-yyyy');
-
-  const formatTime = (dateString: Date) => format(dateString, 'HH:mm');
-
-  const eventStartDate = formatDate(event.start_time);
-  const eventStartTime = formatTime(event.start_time);
-  const eventStartDay = formatDayName(event.start_time);
+  const eventStartDate = formatDate(new Date(event.start_time));
+  const eventStartTime = formatTime(new Date(event.start_time));
+  const eventStartDay = formatDayName(new Date(event.start_time));
 
   const handleAttendanceList = () => {
     setIsAttendanceListOpen((prevState) => !prevState);
@@ -62,14 +69,18 @@ export const Event = () => {
       </button>
 
       {isAttendanceListOpen && (
-        <AttendanceList event={event} refetch={refetch} />
+        <AttendanceList
+          event={event}
+          players={players}
+          refetchEventData={refetchEventData}
+        />
       )}
 
       {!isAttendanceListOpen && (
         <>
           <div className={styles.eventDetails}>
             <div>
-              <h3>{mapEventName(event.event_type).toUpperCase()}</h3>
+              <h3>{mapEventName(event?.event_type).toUpperCase()}</h3>
               <p>
                 {eventStartDate} <span>{eventStartDay.toUpperCase()}</span>
               </p>
@@ -83,28 +94,28 @@ export const Event = () => {
             )}
             <button onClick={handleLocation}>
               <MdAddLocation className={styles.icon} />
-              <p>{event.location.name}</p>
+              <p>{event?.location.name}</p>
             </button>
           </div>
 
-          {event.description_before && (
+          {event?.description_before && (
             <div className={styles.eventDescription}>
               <h2>{isMatchEvent ? <p>Mowa motywacyjna</p> : <p>Opis</p>}</h2>
               <p>{event.description_before}</p>
             </div>
           )}
 
-          {event.description_after && (
+          {event?.description_after && (
             <div className={styles.eventDescription}>
               <h2>Podsumowanie</h2>
               <p>{event.description_after}</p>
             </div>
           )}
 
-          {isMatchEvent && event.lineup && (
+          {isMatchEvent && event?.lineup && (
             <div className={styles.lineup}>
               <h2>Skład</h2>
-              <LineupOverview lineup={event.lineup} />
+              <LineupOverview lineup={event.lineup} players={players} />
             </div>
           )}
         </>

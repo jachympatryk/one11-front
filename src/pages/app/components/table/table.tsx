@@ -1,13 +1,7 @@
-import { useDetails } from '../../details.context.tsx';
 import styles from './table.module.scss';
+import { TableModel } from '../../../../models/table.ts';
 
-export const Table = () => {
-  const { tableData } = useDetails();
-
-  if (tableData.length === 0) {
-    return <p>Ładowanie tabli...</p>;
-  }
-
+export const Table = ({ table }: { table: TableModel[] }) => {
   // const downloadImage = async () => {
   //   const tableElement = document.querySelector(
   //     `.${styles.container} table`
@@ -44,7 +38,7 @@ export const Table = () => {
           </tr>
         </thead>
         <tbody>
-          {tableData.map((team) => (
+          {table?.map((team) => (
             <tr key={team.rank}>
               <td>{team.rank}</td>
               <td>{team.name}</td>

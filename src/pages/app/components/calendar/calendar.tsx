@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   startOfMonth,
   endOfMonth,
@@ -9,58 +9,56 @@ import {
   isSameDay,
 } from 'date-fns';
 import Papa from 'papaparse';
-
 import styles from './calendar.module.scss';
 import { DayCell } from '../day-cell/day-cell.tsx';
-import { useDetails } from '../../details.context.tsx';
+import { useUser } from '../../../../hooks/userUser.ts';
+import { useGetTeamEventsQuery } from '../../../../services/events/eventApi.ts';
+import { monthNames } from '../../../../constants/data.ts';
+import { ModalComponent } from '../../../../components/modal/modal.tsx';
+import { AddEvent } from '../../form/add-event/add-event.tsx';
 import {
   MdNavigateNext,
   MdNavigateBefore,
   MdAdd,
   MdDownload,
 } from 'react-icons/md';
-import { monthNames } from '../../../../constants/data.ts';
-import { ModalComponent } from '../../../../components/modal/modal.tsx';
-import { AddEvent } from '../../form/add-event/add-event.tsx';
+import { EventModel } from '../../../../models/event.ts';
 
 interface CalendarComponentProps {
   currentMonth: Date;
   setCurrentMonth: React.Dispatch<React.SetStateAction<Date>>;
+  events: EventModel[];
 }
 
 export const Calendar: React.FC<CalendarComponentProps> = ({
   currentMonth,
   setCurrentMonth,
+  events,
 }) => {
-  const { events } = useDetails();
-
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const startDay = startOfWeek(startOfMonth(currentMonth), { weekStartsOn: 1 });
   const endDay = endOfWeek(endOfMonth(currentMonth), { weekStartsOn: 1 });
-  const days = eachDayOfInterval({ start: startDay, end: endDay });
+  const days = useMemo(
+    () => eachDayOfInterval({ start: startDay, end: endDay }),
+    [startDay, endDay]
+  );
 
-  const previousMonth = () => {
-    setCurrentMonth(addMonths(currentMonth, -1));
-  };
+  const eventsForDay = useMemo(
+    () => (day: Date) => {
+      return (
+        events?.filter((event) => isSameDay(new Date(event.start_time), day)) ||
+        []
+      );
+    },
+    [events]
+  );
 
-  const nextMonth = () => {
-    setCurrentMonth(addMonths(currentMonth, 1));
-  };
-
-  const eventsForDay = (day: Date) => {
-    return events.filter((event) => isSameDay(new Date(event.start_time), day));
-  };
-
-  const monthName = monthNames[currentMonth.getMonth()];
-  const year = currentMonth.getFullYear();
-
-  const handleCsv = () => {
-    const monthStart = startOfMonth(currentMonth);
-    const monthEnd = endOfMonth(currentMonth);
+  const handleCsvExport = () => {
+    if (!events) return;
     const filteredEvents = events.filter((event) => {
       const eventDate = new Date(event.start_time);
-      return eventDate >= monthStart && eventDate <= monthEnd;
+      return eventDate >= startDay && eventDate <= endDay;
     });
 
     const csvData = filteredEvents.map((event) => ({
@@ -73,21 +71,23 @@ export const Calendar: React.FC<CalendarComponentProps> = ({
       Created_By: event.created_by,
     }));
 
-    const csv = Papa.unparse(csvData, {
-      quotes: true,
-      delimiter: ';',
-    });
-
+    const csv = Papa.unparse(csvData, { quotes: true, delimiter: ';' });
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `${monthName}-${year}-events.csv`);
+    link.setAttribute(
+      'download',
+      `${monthNames[currentMonth.getMonth()]}-${currentMonth.getFullYear()}-events.csv`
+    );
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   };
+
+  const monthName = monthNames[currentMonth.getMonth()];
+  const year = currentMonth.getFullYear();
 
   return (
     <div className={styles.container}>
@@ -97,7 +97,7 @@ export const Calendar: React.FC<CalendarComponentProps> = ({
       >
         <MdAdd />
       </button>
-      <button onClick={handleCsv} className={styles.floatingButtonCsv}>
+      <button onClick={handleCsvExport} className={styles.floatingButtonCsv}>
         <MdDownload />
       </button>
       <ModalComponent
@@ -107,19 +107,25 @@ export const Calendar: React.FC<CalendarComponentProps> = ({
         <AddEvent closeModal={() => setIsModalOpen(false)} />
       </ModalComponent>
       <div className={styles.calendarHeader}>
-        <button className={styles.button} onClick={previousMonth}>
+        <button
+          className={styles.button}
+          onClick={() => setCurrentMonth(addMonths(currentMonth, -1))}
+        >
           <MdNavigateBefore />
         </button>
         <div>{`${monthName} ${year}`}</div>
-        <button className={styles.button} onClick={nextMonth}>
+        <button
+          className={styles.button}
+          onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
+        >
           <MdNavigateNext />
         </button>
       </div>
       <div className={styles.daysLegend}>
         {['Pon', 'Wt', 'Śr', 'Czw', 'Pt', 'Sob', 'Niedz'].map((dayName) => (
           <div
-            className={`${styles.dayItem} ${dayName === 'Sob' || dayName === 'Niedz' ? styles.dayItemWeek : ''}`}
             key={dayName}
+            className={`${styles.dayItem} ${['Sob', 'Niedz'].includes(dayName) ? styles.dayItemWeekend : ''}`}
           >
             {dayName}
           </div>
@@ -127,7 +133,11 @@ export const Calendar: React.FC<CalendarComponentProps> = ({
       </div>
       <div className={styles.daysWrapper}>
         {days.map((day) => (
-          <DayCell day={day} key={day.toString()} events={eventsForDay(day)} />
+          <DayCell
+            key={day.toISOString()}
+            day={day}
+            events={eventsForDay(day)}
+          />
         ))}
       </div>
     </div>

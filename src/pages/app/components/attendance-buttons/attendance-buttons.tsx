@@ -1,97 +1,65 @@
-import { useMutation } from 'react-query';
-import { AttendanceStatus, EventModel } from '../../../../models/event.ts';
-import { updateAttendance } from '../../../../server/event/event.server.ts';
-import { useApp } from '../../app.context.tsx';
+import { AttendanceStatus, EventModel } from '../../../../models/event';
 import styles from './attendance-buttons.module.scss';
-import { mapAttendanceStatus } from '../../../../utils/mapAttendanceStatus.ts';
-import { useDetails } from '../../details.context.tsx';
+import { mapAttendanceStatus } from '../../../../utils/mapAttendanceStatus';
+import { useUser } from '../../../../hooks/userUser';
+import { useUpdateAttendanceStatusMutation } from '../../../../services/events/eventApi.ts';
 
 export const AttendanceButtons = ({
   event,
-  refetch,
+  refetchEventData,
 }: {
   event: EventModel;
-  refetch?: () => void;
+  refetchEventData?: () => void;
 }) => {
-  const { userSelectedFunctionality } = useApp();
-  const { isUserPlayer } = useDetails();
+  const { selectedFunctionary, isUserPlayer } = useUser();
+  const [updateAttendanceStatus] = useUpdateAttendanceStatusMutation();
 
-  // Sprawdzenie, czy są jakieś dane obecności
   if (!event.attendances || event.attendances.length === 0) {
-    return null; // Jeśli nie ma danych obecności, nic nie renderujemy
+    return null;
   }
 
   const currentUserAttendance = event.attendances.find(
-    (attendance) => attendance.playerId === userSelectedFunctionality?.id
+    (attendance) => attendance.playerId === selectedFunctionary?.id
   );
 
   const currentUserStatus = currentUserAttendance
     ? currentUserAttendance.status
     : 'Nieznany';
 
-  const mutation = useMutation(
-    ({
-      eventId,
-      playerId,
-      status,
-    }: {
-      eventId: number;
-      playerId: number;
-      status: AttendanceStatus;
-    }) => updateAttendance(eventId, playerId, status),
-    {
-      onSuccess: () => {
-        if (refetch) {
-          refetch();
-        }
-      },
-    }
-  );
-
-  const changeAttendanceStatus = (newStatus: AttendanceStatus) => {
-    console.log(newStatus); // Logowanie dla celów debugowania
-    mutation.mutate({
-      eventId: event.id,
-      playerId: userSelectedFunctionality?.id || 0,
-      status: newStatus,
-    });
-  };
-
-  if (!isUserPlayer || !currentUserAttendance) return null; // Jeśli użytkownik nie jest graczem lub nie ma przypisanego statusu, nie pokazujemy przycisków
-
   const isButtonDisabled = (status: AttendanceStatus) =>
     status === currentUserStatus;
+
+  const changeAttendanceStatus = (newStatus: AttendanceStatus) => {
+    updateAttendanceStatus({
+      eventId: event.id,
+      playerId: selectedFunctionary?.id || 0,
+      status: newStatus,
+    });
+    refetchEventData?.();
+  };
+
+  if (!isUserPlayer || !currentUserAttendance) return null;
 
   return (
     <div className={styles.container}>
       <p className={styles.userStatus}>
-        Twój status: <span>{mapAttendanceStatus(currentUserStatus)}</span>
+        Twój status:{' '}
+        <span data-type={currentUserStatus}>
+          {mapAttendanceStatus(currentUserStatus)}
+        </span>
       </p>
       <div className={styles.buttonsWrapper}>
-        <button
-          className={styles.button}
-          disabled={isButtonDisabled('CONFIRMED')}
-          data-type={'CONFIRMED'}
-          onClick={() => changeAttendanceStatus('CONFIRMED')}
-        >
-          Potwierdź
-        </button>
-        <button
-          className={styles.button}
-          disabled={isButtonDisabled('ABSENT')}
-          data-type={'ABSENT'}
-          onClick={() => changeAttendanceStatus('ABSENT')}
-        >
-          Nieobecny
-        </button>
-        <button
-          className={styles.button}
-          disabled={isButtonDisabled('LATE')}
-          data-type={'LATE'}
-          onClick={() => changeAttendanceStatus('LATE')}
-        >
-          Spóźniony
-        </button>
+        {['CONFIRMED', 'ABSENT', 'LATE'].map((status) => (
+          <button
+            key={status}
+            className={styles.button}
+            data-type={status}
+            disabled={isButtonDisabled(status as AttendanceStatus)}
+            onClick={() => changeAttendanceStatus(status as AttendanceStatus)}
+          >
+            {mapAttendanceStatus(status)}
+          </button>
+        ))}
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
-import { useDetails } from '../../details.context.tsx';
 import styles from './players-buttons.module.scss';
+import { PlayerModel } from '../../../../models/player.ts';
 
 type PlayerPosition = 'GOALKEEPER' | 'DEFENDER' | 'MIDFIELDER' | 'STRIKER';
 
@@ -8,9 +8,7 @@ interface PositionOption {
   name: string;
 }
 
-export const PlayersButtons = () => {
-  const { players } = useDetails();
-
+export const PlayersButtons = ({ players }: { players: PlayerModel[] }) => {
   // const [isModalOpen, setIsModalOpen] = useState(false);
 
   // const isActive = (filter: PlayerPosition | '') =>

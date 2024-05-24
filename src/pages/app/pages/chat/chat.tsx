@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { ConversationModel } from '../../../../models/conversations.ts';
-import { useApp } from '../../app.context.tsx';
 import { getConversationsByTeam } from '../../../../server/conversations/conversations.server.ts';
 import styles from './chat.module.scss';
 import { getMessagesByConversationId } from '../../../../server/messages/messages.server.ts';
@@ -10,8 +9,7 @@ import { Messages } from '../../components/messages/messages.tsx';
 import { MessageModel } from '../../../../models/messages.ts';
 
 export const Chat = () => {
-  const { userSelectedFunctionality } = useApp();
-
+  return null;
   const [selectedConversation, setSelectedConversation] =
     useState<ConversationModel | null>(null);
   const [messages, setMessages] = useState<MessageModel[]>([]);

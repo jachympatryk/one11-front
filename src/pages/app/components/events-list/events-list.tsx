@@ -8,7 +8,6 @@ import {
   isSameWeek,
 } from 'date-fns';
 import { pl } from 'date-fns/locale';
-import { useDetails } from '../../details.context.tsx';
 import styles from './events-list.module.scss';
 import { monthNames } from '../../../../constants/data.ts';
 import { EventModel } from '../../../../models/event.ts';
@@ -27,49 +26,53 @@ interface EventsListProps {
   setCurrentMonth: React.Dispatch<React.SetStateAction<Date>>;
   isCurrentWeek?: boolean;
   isNextWeek?: boolean;
+  events: EventModel[];
 }
 
 export const EventsList: React.FC<EventsListProps> = ({
   currentMonth,
   isCurrentWeek,
   isNextWeek,
+  events,
 }) => {
-  const { events } = useDetails();
-
   const [eventsGroupedByMonthAndDay, setEventsGroupedByMonthAndDay] =
     useState<EventsByMonth>({});
 
   useEffect(() => {
-    const currentWeekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
-    const nextWeekStart = addWeeks(currentWeekStart, 1);
+    if (events) {
+      const currentWeekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
+      const nextWeekStart = addWeeks(currentWeekStart, 1);
 
-    const filteredEvents = events.filter((event) => {
-      const eventDate = event?.start_time;
-      if (isCurrentWeek) {
-        return isSameWeek(eventDate, currentWeekStart, { weekStartsOn: 1 });
-      } else if (isNextWeek) {
-        return isSameWeek(eventDate, nextWeekStart, { weekStartsOn: 1 });
-      }
-      return isSameMonth(eventDate, currentMonth);
-    });
+      const filteredEvents = events.filter((event) => {
+        const eventDate = event?.start_time;
+        if (isCurrentWeek) {
+          return isSameWeek(eventDate, currentWeekStart, { weekStartsOn: 1 });
+        } else if (isNextWeek) {
+          return isSameWeek(eventDate, nextWeekStart, { weekStartsOn: 1 });
+        }
+        return isSameMonth(eventDate, currentMonth);
+      });
 
-    const newEventsGroupedByMonthAndDay: EventsByMonth =
-      filteredEvents.reduce<EventsByMonth>((acc, event) => {
-        const month = format(event.start_time, 'yyyy-MM', { locale: pl });
-        const day = format(event.start_time, 'EEEE dd.MM', { locale: pl });
+      const newEventsGroupedByMonthAndDay: EventsByMonth =
+        filteredEvents.reduce<EventsByMonth>((acc, event) => {
+          const month = format(event.start_time, 'yyyy-MM', { locale: pl });
+          const day = format(event.start_time, 'EEEE dd.MM', { locale: pl });
 
-        acc[month] = acc[month] || {};
-        acc[month][day] = acc[month][day] || [];
-        acc[month][day].push(event);
-        return acc;
-      }, {});
+          acc[month] = acc[month] || {};
+          acc[month][day] = acc[month][day] || [];
+          acc[month][day].push(event);
+          return acc;
+        }, {});
 
-    setEventsGroupedByMonthAndDay(newEventsGroupedByMonthAndDay);
+      setEventsGroupedByMonthAndDay(newEventsGroupedByMonthAndDay);
+    }
   }, [events, currentMonth, isCurrentWeek, isNextWeek]);
 
   if (Object.keys(eventsGroupedByMonthAndDay).length === 0) {
     return <div className={styles.noEvents}>Brak wydarzeń do wyświetlenia</div>;
   }
+
+  if (!events) return null;
 
   const sortedMonths = Object.keys(eventsGroupedByMonthAndDay).sort();
 
@@ -99,33 +102,29 @@ export const EventsList: React.FC<EventsListProps> = ({
                   if (!dayNumberMatch) return null;
                   const dayNumber = dayNumberMatch[0];
                   const date = parseISO(`${month}-${dayNumber}`);
-                  return { dayKey, date }; // Tworzymy obiekt z dayKey i date
+                  return { dayKey, date };
                 })
                 .filter(
                   (item): item is { dayKey: string; date: Date } =>
                     item !== null
-                ) // Filtr, który potwierdza, że item nie jest null
+                )
                 .sort((a, b) => a.date.getTime() - b.date.getTime()) // Sortujemy tylko obiekty z pełnymi właściwościami
-                .map(
-                  (
-                    { dayKey } // Destructuring obiektu, który na pewno nie jest null
-                  ) => (
-                    <div key={dayKey} className={styles.dayWrapper}>
-                      <p className={styles.dayName}>{dayKey}</p>
-                      <ul className={styles.eventsList}>
-                        {eventsGroupedByMonthAndDay[month][dayKey]
-                          .sort(
-                            (a, b) =>
-                              new Date(a.start_time).getTime() -
-                              new Date(b.start_time).getTime()
-                          )
-                          .map((event) => (
-                            <EventCard event={event} key={event.id} />
-                          ))}
-                      </ul>
-                    </div>
-                  )
-                )}
+                .map(({ dayKey }) => (
+                  <div key={dayKey} className={styles.dayWrapper}>
+                    <p className={styles.dayName}>{dayKey}</p>
+                    <ul className={styles.eventsList}>
+                      {eventsGroupedByMonthAndDay[month][dayKey]
+                        .sort(
+                          (a, b) =>
+                            new Date(a.start_time).getTime() -
+                            new Date(b.start_time).getTime()
+                        )
+                        .map((event) => (
+                          <EventCard event={event} key={event.id} />
+                        ))}
+                    </ul>
+                  </div>
+                ))}
             </div>
           );
         })}

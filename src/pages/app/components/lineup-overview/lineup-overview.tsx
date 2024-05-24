@@ -1,10 +1,14 @@
 import styles from './lineup-overview.module.scss';
-import { useDetails } from '../../details.context.tsx';
 import { TeamLineupModel } from '../../../../models/lineup.ts';
+import { PlayerModel } from '../../../../models/player.ts';
 
-export const LineupOverview = ({ lineup }: { lineup: TeamLineupModel }) => {
-  const { players } = useDetails();
-
+export const LineupOverview = ({
+  lineup,
+  players,
+}: {
+  lineup: TeamLineupModel;
+  players: PlayerModel[];
+}) => {
   const gridPositions = Array.from(
     { length: 70 },
     (_, index) => `pos-${index + 1}`

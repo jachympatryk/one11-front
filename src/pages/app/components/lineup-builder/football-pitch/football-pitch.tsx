@@ -1,15 +1,11 @@
 import React, { useState } from 'react';
 import styles from './football-pitch.module.scss';
-import { useDetails } from '../../../details.context.tsx';
 import { PlayerModel } from '../../../../../models/player.ts';
-import { createTeamLineup } from '../../../../../server/team/team.server.ts';
-import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import { useApp } from '../../../app.context.tsx';
-import {
-  TeamLineupModel,
-  TeamLineupRequest,
-} from '../../../../../models/lineup.ts';
+import { TeamLineupRequest } from '../../../../../models/lineup.ts';
+import { useUser } from '../../../../../hooks/userUser.ts';
+import { useCreateLineupMutation } from '../../../../../services/lineups/lineupsApi.ts';
+import { useGetTeamPlayersQuery } from '../../../../../services/team/teamApi.ts';
 
 export interface PlayerPosition {
   id: number;
@@ -23,43 +19,42 @@ export interface ApiError {
 export const FootballPitch = () => {
   const navigate = useNavigate();
 
-  const { userSelectedFunctionality } = useApp();
-  const { players } = useDetails();
+  const [createLineup, { isLoading }] = useCreateLineupMutation();
+
+  const { selectedFunctionary } = useUser();
+
+  const { data: players } = useGetTeamPlayersQuery(
+    selectedFunctionary?.teamId as number,
+    {
+      skip: !selectedFunctionary?.teamId,
+    }
+  );
+
+  console.log('players', players);
 
   const [currentLineup, setCurrentLineup] = useState<PlayerPosition[]>([]);
   const [lineupName, setLineupName] = useState('');
   const [formationName, setFormationName] = useState('');
 
-  const { mutate: saveLineup, isLoading } = useMutation<
-    TeamLineupModel | null,
-    ApiError,
-    TeamLineupRequest
-  >(
-    (lineupData) =>
-      createTeamLineup(userSelectedFunctionality?.teamId || 0, lineupData),
-    {
-      onSuccess: (res) => {
-        console.log('Zapisano skład', res);
-        if (res) {
-          navigate(`/app/lineup/${res.id}`);
-        }
-      },
-      onError: (error) => {
-        alert(
-          `Błąd przy zapisywaniu składu: ${error.message || 'Nieznany błąd'}`
-        );
-      },
-    }
-  );
-
   const handleSaveLineup = () => {
     const lineupData: TeamLineupRequest = {
-      // Użyj typu TeamLineupRequest
       name: lineupName,
       formationName: formationName,
       players: currentLineup,
+      teamId: selectedFunctionary?.teamId as number,
     };
-    saveLineup(lineupData);
+
+    createLineup(lineupData)
+      .unwrap()
+      .then((res) => {
+        console.log('Zapisano skład', res);
+        navigate(`/app/lineup/${res.id}`);
+      })
+      .catch((apiError) => {
+        alert(
+          `Błąd przy zapisywaniu składu: ${apiError.data?.message || 'Nieznany błąd'}`
+        );
+      });
   };
 
   const gridPositions = Array.from(
@@ -131,7 +126,7 @@ export const FootballPitch = () => {
                 onDragStart={(e) =>
                   handleDragStart(
                     e,
-                    players.find(
+                    players?.find(
                       (player) =>
                         player.id ===
                         currentLineup.find((p) => p.positionId === id)!.id
@@ -141,7 +136,7 @@ export const FootballPitch = () => {
                 className={styles.playerOnPitch}
               >
                 {
-                  players.find(
+                  players?.find(
                     (player) =>
                       player.id ===
                       currentLineup.find((p) => p.positionId === id)!.id
@@ -181,7 +176,7 @@ export const FootballPitch = () => {
         >
           {isLoading ? 'Zapisywanie...' : 'Zapisz skład'}
         </button>
-        {players.map((player) => (
+        {players?.map((player) => (
           <div
             key={player.id}
             draggable

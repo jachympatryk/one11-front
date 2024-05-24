@@ -1,7 +1,6 @@
 import styles from './attendance-list.module.scss';
 import { mapAttendanceStatus } from '../../../../utils/mapAttendanceStatus';
 import { AttendanceStatus, EventModel } from '../../../../models/event';
-import { useDetails } from '../../details.context';
 import { PlayerModel } from '../../../../models/player.ts';
 import { AttendanceButtons } from '../attendance-buttons/attendance-buttons.tsx';
 
@@ -17,13 +16,13 @@ const STATUS_ORDER = ['CONFIRMED', 'LATE', 'PENDING', 'ABSENT'];
 
 export const AttendanceList = ({
   event,
-  refetch,
+  players,
+  refetchEventData,
 }: {
   event: EventModel;
-  refetch: () => void;
+  players: PlayerModel[];
+  refetchEventData: () => void;
 }) => {
-  const { players } = useDetails();
-
   const attendanceMap: AttendanceMap = event.attendances.reduce<AttendanceMap>(
     (acc, curr) => {
       acc[curr.playerId] = curr.status;
@@ -48,7 +47,7 @@ export const AttendanceList = ({
   return (
     <div className={styles.attendanceWrapper}>
       <h2>Lista Obecności</h2>
-      <AttendanceButtons event={event} refetch={refetch} />
+      <AttendanceButtons event={event} refetchEventData={refetchEventData} />
 
       {STATUS_ORDER.map((status) =>
         playersByStatus[status] && playersByStatus[status].length > 0 ? (

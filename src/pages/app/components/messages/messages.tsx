@@ -2,8 +2,6 @@ import styles from './messages.module.scss';
 import React, { useEffect, useRef, useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { addMessage } from '../../../../server/messages/messages.server.ts';
-import { useApp } from '../../app.context.tsx';
-import { useDetails } from '../../details.context.tsx';
 import { MessageModel } from '../../../../models/messages.ts';
 import { ConversationModel } from '../../../../models/conversations.ts';
 
@@ -14,12 +12,10 @@ export const Messages = ({
   messages: MessageModel[];
   selectedConversation: ConversationModel;
 }) => {
+  return null;
   const queryClient = useQueryClient();
   const [text, setText] = useState('');
   const endOfMessagesRef = useRef<HTMLDivElement>(null);
-
-  const { userSelectedFunctionality } = useApp();
-  const { isUserPlayer } = useDetails();
 
   const messageMutation = useMutation(
     () =>

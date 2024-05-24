@@ -7,16 +7,14 @@ import { IoIosSettings } from 'react-icons/io';
 import { ModalComponent } from '../../../../components/modal/modal.tsx';
 import { useEffect, useState } from 'react';
 import { UserFunctionalitySelect } from '../user-functionality-select/user-functionality-select.tsx';
-import { useApp } from '../../app.context.tsx';
 
 export const SideMenu = () => {
-  const { userSelectedFunctionality } = useApp();
-
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     setIsModalOpen(false);
-  }, [userSelectedFunctionality]);
+    // }, [userSelectedFunctionality]);
+  }, []);
 
   return (
     <div className={styles.wrapper}>
