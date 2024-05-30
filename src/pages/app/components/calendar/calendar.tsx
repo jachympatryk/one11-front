@@ -11,8 +11,6 @@ import {
 import Papa from 'papaparse';
 import styles from './calendar.module.scss';
 import { DayCell } from '../day-cell/day-cell.tsx';
-import { useUser } from '../../../../hooks/userUser.ts';
-import { useGetTeamEventsQuery } from '../../../../services/events/eventApi.ts';
 import { monthNames } from '../../../../constants/data.ts';
 import { ModalComponent } from '../../../../components/modal/modal.tsx';
 import { AddEvent } from '../../form/add-event/add-event.tsx';

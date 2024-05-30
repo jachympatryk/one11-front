@@ -1,42 +1,44 @@
-import { useState } from 'react';
-import { useQuery } from 'react-query';
+import { useEffect, useState } from 'react';
 import { ConversationModel } from '../../../../models/conversations.ts';
-import { getConversationsByTeam } from '../../../../server/conversations/conversations.server.ts';
 import styles from './chat.module.scss';
-import { getMessagesByConversationId } from '../../../../server/messages/messages.server.ts';
 import { ConversationsList } from '../../components/conversations-list/converstations-list.tsx';
 import { Messages } from '../../components/messages/messages.tsx';
-import { MessageModel } from '../../../../models/messages.ts';
+import { useGetTeamConversationsQuery } from '../../../../services/conversations/conversationsApi.ts';
+import { useUser } from '../../../../hooks/userUser.ts';
+import { useGetMessagesByConversationIdQuery } from '../../../../services/messagesApi/messagesApi.ts';
+import { Loader } from '../../components/loader/loader.tsx';
 
 export const Chat = () => {
-  return null;
   const [selectedConversation, setSelectedConversation] =
     useState<ConversationModel | null>(null);
-  const [messages, setMessages] = useState<MessageModel[]>([]);
 
-  const { data: conversations } = useQuery<ConversationModel[] | null>(
-    ['conversations', userSelectedFunctionality?.teamId],
-    () => getConversationsByTeam(userSelectedFunctionality?.teamId as number),
-    {
-      enabled: !!userSelectedFunctionality?.teamId,
-      onSuccess: (data) => {
-        if (data?.length) {
-          setSelectedConversation(data[0]);
-        }
-      },
-    }
-  );
+  const { selectedFunctionary } = useUser();
+  const userTeamId = selectedFunctionary?.teamId;
 
-  useQuery<MessageModel[] | null>(
-    ['messages', selectedConversation?.id],
-    () => getMessagesByConversationId(selectedConversation?.id as number),
-    {
-      enabled: !!selectedConversation?.id,
-      onSuccess: (data) => {
-        setMessages(data || []);
-      },
+  const {
+    data: conversations,
+    isSuccess,
+    isError,
+    isLoading,
+  } = useGetTeamConversationsQuery(userTeamId as number, {
+    skip: !userTeamId,
+  });
+
+  const { data: messages = [], refetch: refetchMessages } =
+    useGetMessagesByConversationIdQuery(selectedConversation?.id as number, {
+      skip: !selectedConversation?.id,
+    });
+
+  useEffect(() => {
+    if (conversations && conversations.length) {
+      setSelectedConversation(conversations[0]);
     }
-  );
+  }, [conversations]);
+
+  if (isLoading) return <Loader />;
+  if (isError) return <div className={styles.container}>Wystąpił błąd</div>;
+  if (!isSuccess || !conversations)
+    return <div className={styles.container}>Brak wydarzeń</div>;
 
   // Real-time messages subscription
   // useEffect(() => {
@@ -65,6 +67,7 @@ export const Chat = () => {
             <Messages
               selectedConversation={selectedConversation}
               messages={messages}
+              refetchMessages={refetchMessages}
             />
           )}
         </div>

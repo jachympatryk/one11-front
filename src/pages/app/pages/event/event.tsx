@@ -6,40 +6,24 @@ import { format } from 'date-fns';
 import { pl } from 'date-fns/locale';
 import { MdAddLocation } from 'react-icons/md';
 import { RiFileListLine } from 'react-icons/ri';
-import { useGetEventQuery } from '../../../../services/events/eventApi.ts';
-import { useGetTeamPlayersQuery } from '../../../../services/team/teamApi.ts';
 import { AttendanceList } from '../../components/attendance-list/attendance-list.tsx';
 import { LineupOverview } from '../../components/lineup-overview/lineup-overview.tsx';
-import { useUser } from '../../../../hooks/userUser.ts';
 import { Loader } from '../../components/loader/loader.tsx';
+import { useEvent } from '../../../../hooks/useEvents.ts';
+import { useTeamPlayers } from '../../../../hooks/usePlayers.ts';
 
 export const Event = () => {
-  const { eventId } = useParams<{ eventId: string }>(); // Assuming params are string typed
-  const [isAttendanceListOpen, setIsAttendanceListOpen] = useState(false);
-
+  const { eventId } = useParams<{ eventId: string }>();
   const eventNumber = eventId ? parseInt(eventId, 10) : 0;
 
-  const { selectedFunctionary } = useUser();
+  const { event, isEventLoading, isEventSuccess, refetchEvent } =
+    useEvent(eventNumber);
+  const { playersSuccess, players, playersLoading } = useTeamPlayers();
 
-  const {
-    data: event,
-    isLoading: eventLoading,
-    refetch: refetchEventData,
-    isSuccess: eventSuccess,
-  } = useGetEventQuery(eventNumber, {
-    skip: eventNumber === 0,
-  });
+  const [isAttendanceListOpen, setIsAttendanceListOpen] = useState(false);
 
-  const {
-    data: players,
-    isLoading: playersLoading,
-    isSuccess: playersSuccess,
-  } = useGetTeamPlayersQuery(selectedFunctionary?.teamId as number, {
-    skip: !selectedFunctionary,
-  });
-
-  if (eventLoading || playersLoading) return <Loader />;
-  if (!event || !players || !playersSuccess || !eventSuccess)
+  if (isEventLoading || playersLoading) return <Loader />;
+  if (!event || !players || !playersSuccess || !isEventSuccess)
     return <div className={styles.container}>Brak danych</div>;
 
   const handleLocation = () => {
@@ -72,7 +56,7 @@ export const Event = () => {
         <AttendanceList
           event={event}
           players={players}
-          refetchEventData={refetchEventData}
+          refetchEventData={refetchEvent}
         />
       )}
 

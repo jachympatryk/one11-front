@@ -19,6 +19,7 @@ import { Calendar } from './pages/calendar/calendar.tsx';
 import { Players } from './pages/players/players.tsx';
 import { Lineup } from './pages/lineup/lineup.tsx';
 import { LineupDetails } from './pages/lineup/lineup-details/lineup-details.tsx';
+import { Chat } from './pages/chat/chat.tsx';
 
 export const AppPage = () => {
   const dispatch = useDispatch();
@@ -82,7 +83,7 @@ export const AppPage = () => {
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="table" element={<Table />} />
               <Route path="event/:eventId" element={<Event />} />
-
+              <Route path="chat" element={<Chat />} />
               <Route path="calendar" element={<Calendar />} />
               <Route path="players" element={<Players />} />
               <Route path="lineup" element={<Lineup />} />

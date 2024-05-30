@@ -4,6 +4,8 @@ import userReducer from '../services/user/userSlice.ts';
 import { eventsApi } from '../services/events/eventApi.ts';
 import { teamApi } from '../services/team/teamApi.ts';
 import { lineupsApi } from '../services/lineups/lineupsApi.ts';
+import { conversationsApi } from '../services/conversations/conversationsApi.ts';
+import { messagesApi } from '../services/messagesApi/messagesApi.ts';
 
 const store = configureStore({
   reducer: {
@@ -12,13 +14,17 @@ const store = configureStore({
     [eventsApi.reducerPath]: eventsApi.reducer,
     [teamApi.reducerPath]: teamApi.reducer,
     [lineupsApi.reducerPath]: lineupsApi.reducer,
+    [conversationsApi.reducerPath]: conversationsApi.reducer,
+    [messagesApi.reducerPath]: messagesApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
       userApi.middleware,
       eventsApi.middleware,
       teamApi.middleware,
-      lineupsApi.middleware
+      lineupsApi.middleware,
+      conversationsApi.middleware,
+      messagesApi.middleware
     ),
 });
 

@@ -2,27 +2,19 @@ import { Calendar as CalendarComponent } from '../../components/calendar/calenda
 import { EventsList } from '../../components/events-list/events-list.tsx';
 import styles from './calendar.module.scss';
 import { useState } from 'react';
-import { useGetTeamEventsQuery } from '../../../../services/events/eventApi.ts';
-import { useUser } from '../../../../hooks/userUser.ts';
 import { Loader } from '../../components/loader/loader.tsx';
+import { useTeamEvents } from '../../../../hooks/useEvents.ts';
 
 export const Calendar = () => {
-  const { selectedFunctionary } = useUser();
+  const { events, isEventsSuccess, isEventsLoading, isEventsError } =
+    useTeamEvents();
 
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
 
-  const {
-    data: events,
-    isSuccess,
-    isError,
-    isLoading,
-  } = useGetTeamEventsQuery(selectedFunctionary?.teamId || 0, {
-    skip: !selectedFunctionary?.teamId,
-  });
-
-  if (isLoading) return <Loader />;
-  if (isError) return <div className={styles.container}>Wystąpił błąd</div>;
-  if (!isSuccess || !events)
+  if (isEventsLoading) return <Loader />;
+  if (isEventsError)
+    return <div className={styles.container}>Wystąpił błąd</div>;
+  if (!isEventsSuccess || !events)
     return <div className={styles.container}>Brak danych</div>;
 
   return (

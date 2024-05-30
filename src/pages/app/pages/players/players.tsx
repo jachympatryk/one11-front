@@ -1,24 +1,20 @@
-import { PlayersButtons } from '../../components/players-buttons/players-buttons.tsx';
 import { PlayersList } from '../../components/players-list/players-list.tsx';
 import styles from './players.module.scss';
-import { useUser } from '../../../../hooks/userUser.ts';
-import { useGetTeamPlayersQuery } from '../../../../services/team/teamApi.ts';
+import { useTeamPlayers } from '../../../../hooks/usePlayers.ts';
+import { Loader } from '../../components/loader/loader.tsx';
 
 export const Players = () => {
-  const { selectedFunctionary } = useUser();
+  const { players, playersLoading, playersSuccess, playersError } =
+    useTeamPlayers();
 
-  const { data: players } = useGetTeamPlayersQuery(
-    selectedFunctionary?.teamId as number,
-    {
-      skip: !selectedFunctionary?.teamId,
-    }
-  );
-
-  if (!players) return <div>No players found.</div>;
+  if (playersLoading) return <Loader />;
+  if (playersError)
+    return <div className={styles.container}>Wystąpił błąd</div>;
+  if (!playersSuccess || !players)
+    return <div className={styles.container}>Brak wydarzeń</div>;
 
   return (
     <div className={styles.container}>
-      <PlayersButtons players={players} />
       <PlayersList players={players} />
     </div>
   );

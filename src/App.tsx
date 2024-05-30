@@ -6,12 +6,13 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { AuthPage } from './pages/auth/auth.page.tsx';
 import { AppPage } from './pages/app/app.page.tsx';
 import { Dashboard } from './pages/app/pages/dashboard/dashboard.tsx';
-import { Table } from './pages/app/components/table/table.tsx';
 import { Event } from './pages/app/pages/event/event.tsx';
 import { Calendar } from './pages/app/pages/calendar/calendar.tsx';
 import { Players } from './pages/app/pages/players/players.tsx';
 import { Lineup } from './pages/app/pages/lineup/lineup.tsx';
 import { LineupDetails } from './pages/app/pages/lineup/lineup-details/lineup-details.tsx';
+import { Table } from './pages/app/pages/table/table.tsx';
+import { Chat } from './pages/app/pages/chat/chat.tsx';
 
 const queryClient = new QueryClient();
 
@@ -28,7 +29,7 @@ function App() {
             <Route path="players" element={<Players />} />
 
             <Route path="event/:eventId" element={<Event />} />
-            {/*<Route path="chat" element={<Chat />} />*/}
+            <Route path="chat" element={<Chat />} />
             <Route path="lineup" element={<Lineup />} />
             <Route path="lineup/:lineupId" element={<LineupDetails />} />
           </Route>

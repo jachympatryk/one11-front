@@ -1,49 +1,40 @@
 import styles from './messages.module.scss';
 import React, { useEffect, useRef, useState } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
-import { addMessage } from '../../../../server/messages/messages.server.ts';
 import { MessageModel } from '../../../../models/messages.ts';
 import { ConversationModel } from '../../../../models/conversations.ts';
+import { useSendMessageMutation } from '../../../../services/messagesApi/messagesApi.ts';
+import { useUser } from '../../../../hooks/userUser.ts';
 
 export const Messages = ({
   messages,
   selectedConversation,
+  refetchMessages,
 }: {
   messages: MessageModel[];
   selectedConversation: ConversationModel;
+  refetchMessages: () => void;
 }) => {
-  return null;
-  const queryClient = useQueryClient();
   const [text, setText] = useState('');
   const endOfMessagesRef = useRef<HTMLDivElement>(null);
+  const [sendMessage, { isLoading }] = useSendMessageMutation(); // Use the mutation hook
 
-  const messageMutation = useMutation(
-    () =>
-      addMessage(
-        selectedConversation?.id,
-        text,
-        isUserPlayer,
-        userSelectedFunctionality?.id as number
-      ),
-    {
-      onSuccess: () => {
-        queryClient
-          .invalidateQueries(['messages', selectedConversation?.id])
-          .then();
-        setText('');
-      },
-      onError: () => {
-        console.error('Error sending message');
-      },
-    }
-  );
+  const { selectedFunctionary, isUserPlayer } = useUser();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const functionaryId = isUserPlayer ? null : selectedFunctionary?.id;
+  const playerFunctionaryId = isUserPlayer ? selectedFunctionary?.id : null;
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!text.trim()) return;
 
-    if (text.trim() && selectedConversation?.id) {
-      messageMutation.mutate();
-    }
+    await sendMessage({
+      conversationId: selectedConversation.id,
+      content: text,
+      functionaryId,
+      playerId: playerFunctionaryId,
+    }).then(() => refetchMessages());
+
+    setText('');
   };
 
   useEffect(() => {
@@ -58,7 +49,7 @@ export const Messages = ({
             ? `${message.functionary.name} ${message.functionary.surname}`
             : message.player
               ? `${message.player.name} ${message.player.surname}`
-              : 'Nieznany autor'; // Domyślny autor, jeśli nie ma ani functionary, ani player
+              : 'Nieznany autor';
 
           return (
             <div className={styles.message} key={message.id}>
@@ -80,8 +71,8 @@ export const Messages = ({
         />
         <button
           type="submit"
+          disabled={isLoading}
           className={styles.sendButton}
-          disabled={!text.trim() || messageMutation.isLoading}
         >
           Wyślij
         </button>
