@@ -39,7 +39,7 @@ export const EventsList: React.FC<EventsListProps> = ({
     useState<EventsByMonth>({});
 
   useEffect(() => {
-    if (events) {
+    if (events && events.length !== 0) {
       const currentWeekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
       const nextWeekStart = addWeeks(currentWeekStart, 1);
 
