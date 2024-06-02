@@ -24,8 +24,10 @@ import { Chat } from './pages/chat/chat.tsx';
 export const AppPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const storageKey = 'sb-afzpocxbduofkmibqinl-auth-token';
+  // const storageKey = 'sb-afzpocxbduofkmibqinl-auth-token';
+  const storageKey = 'sb-senhtzrmilighelczbcy-auth-token';
 
+  // sb-senhtzrmilighelczbcy-auth-token
   const { selectedFunctionary, updateSelectedFunctionary } = useUser();
 
   const { updateUserId } = useUser();
