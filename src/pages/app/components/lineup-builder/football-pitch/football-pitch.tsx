@@ -107,6 +107,16 @@ export const FootballPitch = () => {
     }
   };
 
+  const findPlayerForPosition = (positionId: string) => {
+    const playerOnPosition = currentLineup.find(
+      (p) => p.positionId === positionId
+    );
+
+    if (!playerOnPosition) return undefined;
+
+    return players?.find((player) => player.id === playerOnPosition.id);
+  };
+
   return (
     <div className={styles.pitch}>
       <div className={styles.field}>
@@ -124,14 +134,7 @@ export const FootballPitch = () => {
               <div
                 draggable
                 onDragStart={(e) =>
-                  handleDragStart(
-                    e,
-                    players?.find(
-                      (player) =>
-                        player.id ===
-                        currentLineup.find((p) => p.positionId === id)!.id
-                    )!
-                  )
+                  handleDragStart(e, findPlayerForPosition(id))
                 }
                 className={styles.playerOnPitch}
               >

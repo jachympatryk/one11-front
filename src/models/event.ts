@@ -19,9 +19,13 @@ export interface EventModel {
   teamId: number; // Zakładam, że to jest zawsze wymagane, nie ma znaku zapytania
   attendances: AttendanceModel[];
   location: LocationModel;
+  locationId: number;
 }
 
-export type CreateEventModel = Omit<EventModel, 'id' | 'attendances'>;
+export type CreateEventModel = Omit<
+  EventModel,
+  'id' | 'attendances' | 'location'
+>;
 
 export type EventType =
   | 'TRAINING'

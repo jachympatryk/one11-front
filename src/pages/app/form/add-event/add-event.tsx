@@ -55,6 +55,8 @@ export const AddEvent = ({ closeModal }: { closeModal: () => void }) => {
               ? new Date(values.collection_time)
               : undefined,
             event_type: values.event_type as EventType,
+            locationId: 1,
+            created_by: '1',
           };
 
           try {
