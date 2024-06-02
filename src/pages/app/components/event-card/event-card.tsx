@@ -10,7 +10,7 @@ export const EventCard = ({ event }: { event: EventModel }) => {
 
   const formatTime = (dateString: Date) => format(dateString, 'HH:mm');
 
-  const eventStartTime = formatTime(event.start_time);
+  const eventStartTime = formatTime(event?.start_time);
 
   return (
     <div className={styles.container}>
