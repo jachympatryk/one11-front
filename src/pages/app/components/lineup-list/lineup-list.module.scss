@@ -11,6 +11,7 @@
 
   @media screen and (min-width: $breakpoint-sm) {
     padding: 64px;
+    align-items: center;
   }
 }
 
@@ -53,6 +54,7 @@
   flex-direction: column;
   justify-content: center;
   margin: 0 auto;
+  height: max-content;
   gap: 16px;
   background: #1f1f20;
   border-radius: 16px;

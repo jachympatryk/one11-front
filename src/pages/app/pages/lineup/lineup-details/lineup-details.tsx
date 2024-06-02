@@ -4,6 +4,8 @@ import styles from './lineup-details.module.scss';
 import { useGetLineupsQuery } from '../../../../../services/lineups/lineupsApi.ts';
 import { useGetTeamPlayersQuery } from '../../../../../services/team/teamApi.ts';
 import { useUser } from '../../../../../hooks/userUser.ts';
+import { IoIosArrowBack } from 'react-icons/io';
+import { MdEdit } from 'react-icons/md';
 
 export const LineupDetails = ({
   propsLineupId,
@@ -39,8 +41,14 @@ export const LineupDetails = ({
 
   return (
     <div className={styles.container}>
-      <div>
-        <button onClick={handleBackClick}>{'<'}</button>
+      <div className={styles.buttonsWrapper}>
+        <button className={styles.button} onClick={handleBackClick}>
+          <IoIosArrowBack />
+        </button>
+
+        <button className={styles.button} onClick={handleBackClick}>
+          <MdEdit />
+        </button>
       </div>
       {lineup && players && (
         <LineupOverview lineup={lineup} players={players} />

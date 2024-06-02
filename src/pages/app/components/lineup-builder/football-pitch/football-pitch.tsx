@@ -12,10 +12,6 @@ export interface PlayerPosition {
   positionId: string;
 }
 
-export interface ApiError {
-  message: string;
-}
-
 export const FootballPitch = () => {
   const navigate = useNavigate();
 
@@ -30,8 +26,6 @@ export const FootballPitch = () => {
     }
   );
 
-  console.log('players', players);
-
   const [currentLineup, setCurrentLineup] = useState<PlayerPosition[]>([]);
   const [lineupName, setLineupName] = useState('');
   const [formationName, setFormationName] = useState('');
@@ -41,10 +35,11 @@ export const FootballPitch = () => {
       name: lineupName,
       formationName: formationName,
       players: currentLineup,
-      teamId: selectedFunctionary?.teamId as number,
     };
 
-    createLineup(lineupData)
+    console.log('lineupData', lineupData);
+
+    createLineup({ lineupData, teamId: selectedFunctionary?.teamId as number })
       .unwrap()
       .then((res) => {
         console.log('Zapisano skład', res);
@@ -64,8 +59,13 @@ export const FootballPitch = () => {
 
   const handleDragStart = (
     e: React.DragEvent<HTMLDivElement>,
-    player: PlayerModel
+    player: PlayerModel | undefined | null
   ) => {
+    if (!player || !player.id) {
+      console.error('Player data is incomplete:', player);
+      return;
+    }
+
     e.dataTransfer.setData('playerId', player.id.toString());
   };
 
@@ -155,6 +155,8 @@ export const FootballPitch = () => {
         <div className={styles.penaltyAreaLeft}></div>
         <div className={styles.penaltyAreaRight}></div>
       </div>
+
+      <div className={styles.bench}>BENCH</div>
 
       <div className={styles.playerList}>
         <input

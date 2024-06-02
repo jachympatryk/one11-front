@@ -20,6 +20,7 @@ export interface TeamLineupModel {
 
 export interface TeamLineupRequest {
   name: string;
+
   formationName: string;
   players: Array<{
     id: number; // ID zawodnika

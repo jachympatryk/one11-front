@@ -21,14 +21,16 @@ export const Lineup = () => {
 
   return (
     <div className={styles.container}>
-      <div>
+      <div className={styles.buttons}>
         <button onClick={() => setIsAddingNew(!isAddingNew)}>
           {isAddingNew ? 'Cancel' : 'Add New Lineup'}
         </button>
       </div>
 
-      {!isAddingNew && <LineupList lineups={safeLineups} />}
-      {isAddingNew && <LineupBuilder />}
+      <div className={styles.content}>
+        {!isAddingNew && <LineupList lineups={safeLineups} />}
+        {isAddingNew && <LineupBuilder />}
+      </div>
     </div>
   );
 };
