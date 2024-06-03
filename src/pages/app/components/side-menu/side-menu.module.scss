@@ -28,6 +28,21 @@ background-color: #1f1f20;
     justify-content: flex-start;
     gap: 24px;
   }
+
+  a {
+    width: 40px;
+    height: 40px;
+    border-radius: 1000px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #4253ac;
+    transition: background-color 0.3s, color 0.1s;
+  }
+
+  a:hover {
+    color: #4253ac;
+  }
 }
 
 .settings {
@@ -51,5 +66,10 @@ background-color: #1f1f20;
   display: flex;
     justify-content: center;
     align-items: center;
+}
 
+
+.activeLink {
+  background-color: #4253ac;
+  color: #fff !important;
 }
