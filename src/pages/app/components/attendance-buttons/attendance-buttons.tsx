@@ -12,7 +12,8 @@ export const AttendanceButtons = ({
   refetchEventData?: () => void;
 }) => {
   const { selectedFunctionary, isUserPlayer } = useUser();
-  const [updateAttendanceStatus] = useUpdateAttendanceStatusMutation();
+  const [updateAttendanceStatus, { isLoading }] =
+    useUpdateAttendanceStatusMutation();
 
   if (!event.attendances || event.attendances.length === 0) {
     return null;
@@ -27,15 +28,16 @@ export const AttendanceButtons = ({
     : 'Nieznany';
 
   const isButtonDisabled = (status: AttendanceStatus) =>
-    status === currentUserStatus;
+    status === currentUserStatus || isLoading;
 
-  const changeAttendanceStatus = (newStatus: AttendanceStatus) => {
-    updateAttendanceStatus({
+  const changeAttendanceStatus = async (newStatus: AttendanceStatus) => {
+    await updateAttendanceStatus({
       eventId: event.id,
       playerId: selectedFunctionary?.id || 0,
       status: newStatus,
+    }).then(() => {
+      refetchEventData?.();
     });
-    refetchEventData?.();
   };
 
   if (!isUserPlayer || !currentUserAttendance) return null;
