@@ -16,6 +16,8 @@ export const Dashboard = () => {
     return <div className={styles.container}>Wystąpił błąd</div>;
   if (!isEventsSuccess || !events)
     return <div className={styles.container}>Brak wydarzeń</div>;
+  if (events.length === 0)
+    return <div className={styles.container}>Brak wydarzeń</div>;
 
   return (
     <div className={styles.container}>

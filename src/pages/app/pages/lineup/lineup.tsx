@@ -23,7 +23,7 @@ export const Lineup = () => {
     <div className={styles.container}>
       <div className={styles.buttons}>
         <button onClick={() => setIsAddingNew(!isAddingNew)}>
-          {isAddingNew ? 'Cancel' : 'Add New Lineup'}
+          {isAddingNew ? 'Anuluj dodawanie' : 'Dodaj nowy skład'}
         </button>
       </div>
 
