@@ -3,32 +3,41 @@
 .container {
   width: 100%;
   height: 100%;
-  padding: 24px;
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  
+  padding: 64px;
+  gap: 64px;
+
   @media screen and (min-width: $breakpoint-sm) {
     display: grid;
-    grid-template-rows: 100px 1fr;
     grid-template-columns: 1fr;
    }
   }
 
-.buttons {
-  width: 100%;
-  height: 100%;
+.floatingButton {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  background-color: #4253ac;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  font-size: 32px;
+  height: 60px;
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
+  -webkit-box-shadow: 12px 12px 13px -9px rgba(31, 31, 32, 1);
+  -moz-box-shadow: 12px 12px 13px -9px rgba(31, 31, 32, 1);
+  box-shadow: 12px 12px 13px -9px rgba(31, 31, 32, 1);
 }
 
 .content {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  grid-column:  1 / 2;
-    grid-row: 2 / 3;
-
 }

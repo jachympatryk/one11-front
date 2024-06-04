@@ -8,6 +8,7 @@
     grid-template-rows: 1fr;
   overflow-y: scroll;
   padding: 16px;
+  gap: 32px;
 
   @media screen and (min-width: $breakpoint-sm) {
     padding: 64px;

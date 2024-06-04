@@ -16,3 +16,15 @@ export interface TableModel {
   awayLosses: number;
   awayGoalsForAgainst: string;
 }
+
+export interface MatchWeekModel {
+  homeTeam: string;
+  awayTeam: string;
+  score: string;
+  dateTime: number;
+}
+
+export interface MatchWeeksModel {
+  weekInfo: string;
+  matches: MatchWeekModel[];
+}

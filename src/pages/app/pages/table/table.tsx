@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../../store/store.ts';
 import { useGetTeamQuery } from '../../../../services/team/teamApi.ts';
 import { Loader } from '../../components/loader/loader.tsx';
+import { MatchWeeks } from '../../components/match-weeks/match-weeks.tsx';
 
 export const Table = () => {
   const userTeamId = useSelector(
@@ -25,6 +26,7 @@ export const Table = () => {
   return (
     <div className={styles.container}>
       <TableComponent table={data.table} />
+      <MatchWeeks matchWeeks={data.matchWeeks} />
     </div>
   );
 };
