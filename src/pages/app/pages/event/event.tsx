@@ -76,10 +76,12 @@ export const Event = () => {
                 <p>Ks Nowa Jastrząbka-Żukowice</p>
               </div>
             )}
-            <button onClick={handleLocation}>
-              <MdAddLocation className={styles.icon} />
-              <p>{event?.location.name}</p>
-            </button>
+            {event.location && (
+              <button onClick={handleLocation}>
+                <MdAddLocation className={styles.icon} />
+                <p>{event?.location?.name}</p>
+              </button>
+            )}
           </div>
 
           {event?.description_before && (

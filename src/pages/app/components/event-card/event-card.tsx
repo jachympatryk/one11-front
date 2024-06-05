@@ -24,10 +24,12 @@ export const EventCard = ({ event }: { event: EventModel }) => {
       </Link>
 
       <div className={styles.details}>
-        <div className={styles.location}>
-          <MdAddLocation />
-          <p>{event.location.name}</p>
-        </div>
+        {event.location && (
+          <div className={styles.location}>
+            <MdAddLocation />
+            <p>{event.location.name}</p>
+          </div>
+        )}
       </div>
     </div>
   );
