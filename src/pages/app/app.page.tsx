@@ -1,11 +1,9 @@
 import { useEffect } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { useGetUserByIdQuery } from '../../services/user/userApi.ts';
+import { useDispatch } from 'react-redux';
 
 import { SideMenu } from './components/side-menu/side-menu.tsx';
 import styles from './app.module.scss';
-import { RootState } from '../../store/store.ts';
 import {
   setIsUserPlayer,
   setUserAuthId,
@@ -24,20 +22,25 @@ import { Chat } from './pages/chat/chat.tsx';
 export const AppPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  // const storageKey = 'sb-afzpocxbduofkmibqinl-auth-token';
-  const storageKey = 'sb-senhtzrmilighelczbcy-auth-token';
 
-  // sb-senhtzrmilighelczbcy-auth-token
   const { selectedFunctionary, updateSelectedFunctionary } = useUser();
 
   const { updateUserId } = useUser();
 
+  const user = localStorage.getItem('user');
+
   useEffect(() => {
-    const storedData = localStorage.getItem(storageKey);
+    const storedData = localStorage.getItem('user');
+
     if (storedData) {
       const parsedData = JSON.parse(storedData);
-      const userId = parsedData?.user?.id;
+      const userId = parsedData?.id;
+
+      console.log(parsedData);
+
       if (userId) {
+        updateUserId(userId);
+
         dispatch(setUserAuthId(userId));
       } else {
         navigate('/auth');
@@ -46,18 +49,6 @@ export const AppPage = () => {
       navigate('/auth');
     }
   }, [dispatch, navigate]);
-
-  const userAuthId = useSelector((state: RootState) => state.user.userAuthId);
-
-  const { data: user } = useGetUserByIdQuery(userAuthId as string, {
-    skip: !userAuthId,
-  });
-
-  useEffect(() => {
-    if (user && user.id) {
-      updateUserId(user.id);
-    }
-  }, [user]);
 
   useEffect(() => {
     if (user) {

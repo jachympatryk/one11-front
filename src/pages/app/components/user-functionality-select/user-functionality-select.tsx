@@ -15,6 +15,8 @@ export const UserFunctionalitySelect = () => {
   const { userId, updateSelectedFunctionary } = useUser();
   const dispatch = useDispatch();
 
+  console.log(userId);
+
   const {
     data: functionaries,
     isSuccess: isFunctionariesSuccess,

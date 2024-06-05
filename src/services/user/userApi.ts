@@ -2,6 +2,7 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQuery } from '../../server/server.ts';
 import { FunctionaryModel } from '../../models/functionary.ts';
 import { PlayerModel } from '../../models/player.ts';
+import { UserModel } from '../../models/user.ts';
 
 export interface UserFunctionaryResponse {
   userId: number;
@@ -36,6 +37,16 @@ export const userApi = createApi({
     getUserById: builder.query<UserResponse, string>({
       query: (id) => ({ url: `users/by-auth-id/${id}` }),
     }),
+    loginUser: builder.mutation<
+      { access_token: string; user: UserModel },
+      { email: string; password: string }
+    >({
+      query: (credentials) => ({
+        url: 'auth/login',
+        method: 'POST',
+        body: credentials,
+      }),
+    }),
   }),
 });
 
@@ -43,4 +54,5 @@ export const {
   useGetUserFunctionariesQuery,
   useGetUserPlayersQuery,
   useGetUserByIdQuery,
+  useLoginUserMutation,
 } = userApi;

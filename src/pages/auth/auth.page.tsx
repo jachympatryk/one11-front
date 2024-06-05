@@ -1,56 +1,46 @@
-import { createClient, Session } from '@supabase/supabase-js';
-import { useEffect, useState } from 'react';
-import { Auth } from '@supabase/auth-ui-react';
-import { ThemeSupa } from '@supabase/auth-ui-shared';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { syncUserWithBackend } from '../../server/user/user.server.ts';
-
-const supabase = createClient(
-  import.meta.env.VITE_REACT_APP_SUPABASE_URL as string,
-  import.meta.env.VITE_REACT_APP_SUPABASE_ANON_KEY as string
-);
+import { useLoginUserMutation } from '../../services/user/userApi';
 
 export const AuthPage = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  const [session, setSession] = useState<Session | null>(null);
+  const [loginUser, { isLoading, error }] = useLoginUserMutation();
 
-  useEffect(() => {
-    const updateSessionAndSyncUser = async (session: Session | null) => {
-      setSession(session);
-      if (session?.user) {
-        try {
-          await syncUserWithBackend({
-            auth_id: session.user.id,
-            email: session.user.email as string,
-          });
-        } catch (error) {
-          console.error('error:', error);
-        }
+  const handleLogin = async () => {
+    try {
+      const result = await loginUser({ email, password });
+
+      if (result.data?.access_token) {
+        localStorage.setItem('access_token', result.data.access_token);
+        localStorage.setItem('user', JSON.stringify(result.data.user));
+
+        navigate('/app/dashboard');
       }
-    };
+    } catch (err) {
+      console.error('Login failed:', err);
+    }
+  };
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      updateSessionAndSyncUser(session).then();
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      updateSessionAndSyncUser(session).then();
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  if (!session) {
-    return (
-      <Auth
-        supabaseClient={supabase}
-        theme="dark"
-        appearance={{ theme: ThemeSupa }}
+  return (
+    <div>
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email"
       />
-    );
-  } else {
-    navigate('/app/dashboard');
-  }
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Password"
+      />
+      <button onClick={handleLogin} disabled={isLoading}>
+        Log In
+      </button>
+      {error && <p style={{ color: 'red' }}>Error during login</p>}
+    </div>
+  );
 };

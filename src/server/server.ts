@@ -16,11 +16,6 @@ export interface FetchOptions<T = unknown> {
   headers?: HeadersInit;
 }
 
-export interface ApiResponse<T> {
-  data: T;
-  error?: { message: string };
-}
-
 export async function fetchFromBackend<T>(
   endpoint: string,
   { method = 'GET', body, headers = {} }: FetchOptions = {}
@@ -67,11 +62,15 @@ interface FetchError {
 export const baseQuery: BaseQueryFn<FetchArgs, unknown, FetchError> = async (
   args
 ) => {
+  const token = localStorage.getItem('token');
   try {
     const data = await fetchFromBackend<unknown>(args.url, {
       method: args.method,
       body: args.body,
-      headers: args.headers,
+      headers: {
+        ...args.headers,
+        Authorization: token ? `Bearer ${token}` : '', // Dodajemy token JWT do nagłówków żądania
+      },
     });
     return { data };
   } catch (error) {
