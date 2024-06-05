@@ -55,8 +55,8 @@ export const EventsList: React.FC<EventsListProps> = ({
 
       const newEventsGroupedByMonthAndDay: EventsByMonth =
         filteredEvents.reduce<EventsByMonth>((acc, event) => {
-          const month = format(event.start_time, 'yyyy-MM', { locale: pl });
-          const day = format(event.start_time, 'EEEE dd.MM', { locale: pl });
+          const month = format(event?.start_time, 'yyyy-MM', { locale: pl });
+          const day = format(event?.start_time, 'EEEE dd.MM', { locale: pl });
 
           acc[month] = acc[month] || {};
           acc[month][day] = acc[month][day] || [];
@@ -116,8 +116,8 @@ export const EventsList: React.FC<EventsListProps> = ({
                       {eventsGroupedByMonthAndDay[month][dayKey]
                         .sort(
                           (a, b) =>
-                            new Date(a.start_time).getTime() -
-                            new Date(b.start_time).getTime()
+                            new Date(a?.start_time).getTime() -
+                            new Date(b?.start_time).getTime()
                         )
                         .map((event) => (
                           <EventCard event={event} key={event.id} />

@@ -36,9 +36,9 @@ export const Chat = () => {
   }, [conversations]);
 
   if (isLoading) return <Loader />;
-  if (isError) return <div className={styles.container}>Wystąpił błąd</div>;
-  if (!isSuccess || !conversations)
-    return <div className={styles.container}>Brak wydarzeń</div>;
+  if (isError) return <div className={styles.wrapper}>Wystąpił błąd</div>;
+  if (!isSuccess || !conversations || conversations.length === 0)
+    return <div className={styles.wrapper}>Brak chatów</div>;
 
   // Real-time messages subscription
   // useEffect(() => {
@@ -55,7 +55,7 @@ export const Chat = () => {
 
   return (
     <div className={styles.wrapper}>
-      {conversations && conversations.length && (
+      {conversations && conversations.length !== 0 && (
         <div className={styles.container}>
           <ConversationsList
             conversations={conversations}

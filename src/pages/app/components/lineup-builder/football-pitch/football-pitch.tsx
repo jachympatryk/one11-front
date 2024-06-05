@@ -6,13 +6,18 @@ import { TeamLineupRequest } from '../../../../../models/lineup.ts';
 import { useUser } from '../../../../../hooks/userUser.ts';
 import { useCreateLineupMutation } from '../../../../../services/lineups/lineupsApi.ts';
 import { useGetTeamPlayersQuery } from '../../../../../services/team/teamApi.ts';
+import { mapPositionName } from '../../../../../utils/mapPositionName.ts';
 
 export interface PlayerPosition {
   id: number;
   positionId: string;
 }
 
-export const FootballPitch = () => {
+export const FootballPitch = ({
+  refetchLineups,
+}: {
+  refetchLineups: () => Promise<void>;
+}) => {
   const navigate = useNavigate();
 
   const [createLineup, { isLoading }] = useCreateLineupMutation();
@@ -30,7 +35,7 @@ export const FootballPitch = () => {
   const [lineupName, setLineupName] = useState('');
   const [formationName, setFormationName] = useState('');
 
-  const handleSaveLineup = () => {
+  const handleSaveLineup = async () => {
     const lineupData: TeamLineupRequest = {
       name: lineupName,
       formationName: formationName,
@@ -39,11 +44,15 @@ export const FootballPitch = () => {
 
     console.log('lineupData', lineupData);
 
-    createLineup({ lineupData, teamId: selectedFunctionary?.teamId as number })
+    await createLineup({
+      lineupData,
+      teamId: selectedFunctionary?.teamId as number,
+    })
       .unwrap()
-      .then((res) => {
+      .then(async (res) => {
         console.log('Zapisano skład', res);
         navigate(`/app/lineup/${res.id}`);
+        await refetchLineups();
       })
       .catch((apiError) => {
         alert(
@@ -69,6 +78,8 @@ export const FootballPitch = () => {
     e.dataTransfer.setData('playerId', player.id.toString());
   };
 
+  console.log(currentLineup);
+
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
   };
@@ -81,6 +92,24 @@ export const FootballPitch = () => {
     const playerId = e.dataTransfer.getData('playerId');
     const numericPlayerId = parseInt(playerId);
 
+    if (positionId === 'pos-0') {
+      const isAlreadyBench = currentLineup.some(
+        (p) => p.id === numericPlayerId && p.positionId === 'pos-0'
+      );
+
+      if (!isAlreadyBench) {
+        const newLineup = currentLineup.map((p) =>
+          p.id === numericPlayerId ? { ...p, positionId: 'pos-0' } : p
+        );
+        const playerOnBench = newLineup.find((p) => p.id === numericPlayerId);
+        if (!playerOnBench) {
+          newLineup.push({ id: numericPlayerId, positionId: 'pos-0' });
+        }
+        setCurrentLineup(newLineup);
+      }
+      return;
+    }
+
     const isPositionOccupied = currentLineup.some(
       (p) => p.positionId === positionId && p.id !== numericPlayerId
     );
@@ -89,22 +118,9 @@ export const FootballPitch = () => {
       return;
     }
 
-    const isPlayerAlreadyOnPitch = currentLineup.some(
-      (p) => p.id === numericPlayerId
-    );
-
-    if (isPlayerAlreadyOnPitch) {
-      const updatedLineup = currentLineup.map((p) =>
-        p.id === numericPlayerId ? { ...p, positionId: positionId } : p
-      );
-      setCurrentLineup(updatedLineup);
-    } else {
-      const newLineup = currentLineup.filter(
-        (p) => p.positionId !== positionId
-      );
-      newLineup.push({ id: numericPlayerId, positionId });
-      setCurrentLineup(newLineup);
-    }
+    const newLineup = currentLineup.filter((p) => p.id !== numericPlayerId);
+    newLineup.push({ id: numericPlayerId, positionId });
+    setCurrentLineup(newLineup);
   };
 
   const findPlayerForPosition = (positionId: string) => {
@@ -116,6 +132,10 @@ export const FootballPitch = () => {
 
     return players?.find((player) => player.id === playerOnPosition.id);
   };
+
+  const availablePlayers = players?.filter(
+    (player) => !currentLineup.some((p) => p.id === player.id)
+  );
 
   return (
     <div className={styles.pitch}>
@@ -138,13 +158,24 @@ export const FootballPitch = () => {
                 }
                 className={styles.playerOnPitch}
               >
-                {
-                  players?.find(
-                    (player) =>
-                      player.id ===
-                      currentLineup.find((p) => p.positionId === id)!.id
-                  )?.surname
-                }
+                <h2>
+                  {
+                    players?.find(
+                      (player) =>
+                        player.id ===
+                        currentLineup.find((p) => p.positionId === id)!.id
+                    )?.number
+                  }
+                </h2>
+                <p>
+                  {
+                    players?.find(
+                      (player) =>
+                        player.id ===
+                        currentLineup.find((p) => p.positionId === id)!.id
+                    )?.surname
+                  }
+                </p>
               </div>
             )}
           </div>
@@ -159,38 +190,70 @@ export const FootballPitch = () => {
         <div className={styles.penaltyAreaRight}></div>
       </div>
 
-      <div className={styles.bench}>BENCH</div>
+      <div
+        className={styles.bench}
+        onDragOver={handleDragOver}
+        onDrop={(e) => handleDrop(e, 'pos-0')}
+      >
+        {currentLineup
+          .filter((p) => p.positionId === 'pos-0')
+          .map((player) => (
+            <div
+              key={player.id}
+              className={styles.playerOnBench}
+              draggable
+              onDragStart={(e) =>
+                handleDragStart(
+                  e,
+                  players?.find((p) => p.id === player.id)
+                )
+              }
+            >
+              <h2>{players?.find((p) => p.id === player.id)?.number}</h2>
+              <p>{players?.find((p) => p.id === player.id)?.surname}</p>
+            </div>
+          ))}
+      </div>
 
       <div className={styles.playerList}>
-        <input
-          value={lineupName}
-          onChange={(e) => setLineupName(e.target.value)}
-          placeholder="Nazwa składu"
-          className={styles.input}
-        />
-        <input
-          value={formationName}
-          onChange={(e) => setFormationName(e.target.value)}
-          placeholder="Nazwa formacji"
-          className={styles.input}
-        />
-        <button
-          onClick={handleSaveLineup}
-          disabled={isLoading}
-          className={styles.saveButton}
-        >
-          {isLoading ? 'Zapisywanie...' : 'Zapisz skład'}
-        </button>
-        {players?.map((player) => (
-          <div
-            key={player.id}
-            draggable
-            className={styles.player}
-            onDragStart={(e) => handleDragStart(e, player)}
+        <div className={styles.inputsWrapper}>
+          <input
+            value={lineupName}
+            onChange={(e) => setLineupName(e.target.value)}
+            placeholder="Nazwa składu"
+            className={styles.input}
+          />
+          <input
+            value={formationName}
+            onChange={(e) => setFormationName(e.target.value)}
+            placeholder="Nazwa formacji"
+            className={styles.input}
+          />
+          <button
+            onClick={handleSaveLineup}
+            disabled={isLoading}
+            className={styles.saveButton}
           >
-            {player.name} {player.surname} ({player.position})
-          </div>
-        ))}
+            {isLoading ? 'Zapisywanie...' : 'Zapisz skład'}
+          </button>
+        </div>
+
+        <div className={styles.playersWrapper}>
+          {availablePlayers?.map((player) => (
+            <div
+              key={player.id}
+              draggable
+              className={styles.player}
+              onDragStart={(e) => handleDragStart(e, player)}
+            >
+              <h2>{player.number}</h2>
+              <p>
+                {player.name} {player.surname}{' '}
+                {mapPositionName(player.position)}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

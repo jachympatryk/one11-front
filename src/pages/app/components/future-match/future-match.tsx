@@ -15,17 +15,20 @@ export const FutureMatch = ({
   const getNthMatchEvent = () => {
     const matchEvents = events?.filter((event) => event.event_type === 'MATCH');
 
-    matchEvents.sort((a, b) => compareAsc(a.start_time, b.start_time));
+    matchEvents?.sort((a, b) => compareAsc(a?.start_time, b?.start_time));
 
     return matchEvents[gameInTurn - 1];
   };
 
-  const formatDayName = (dateString: Date) =>
-    format(dateString, 'EEEE', { locale: pl });
+  const formatDayName = (dateString: Date) => {
+    if (!dateString) return;
+
+    return format(dateString, 'EEEE dd.MM', { locale: pl });
+  };
 
   const nthMatchEvent = getNthMatchEvent();
 
-  const eventStartDay = formatDayName(nthMatchEvent.start_time);
+  const eventStartDay = formatDayName(nthMatchEvent?.start_time);
 
   if (!nthMatchEvent) return;
 

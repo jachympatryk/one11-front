@@ -14,21 +14,17 @@ export const LineupOverview = ({
     (_, index) => `pos-${index + 1}`
   );
 
-  // const downloadImage = async () => {
-  //   const fieldElement = document.querySelector(
-  //     `.${styles.field}`
-  //   ) as HTMLElement;
-  //   if (fieldElement) {
-  //     const canvas = await html2canvas(fieldElement);
-  //     const image = canvas
-  //       .toDataURL('image/png')
-  //       .replace('image/png', 'image/octet-stream');
-  //     const link = document.createElement('a');
-  //     link.download = lineup.name; // Zapewnij, że lineup ma właściwość name
-  //     link.href = image;
-  //     link.click();
-  //   }
-  // };
+  console.log(lineup);
+
+  const benchPlayers = lineup.players
+    .filter((p) => p.playerPosition === 'pos-0')
+    .map((benchPlayer) => {
+      const playerDetails = players.find((p) => p.id === benchPlayer.playerId);
+      return playerDetails ? { ...benchPlayer, ...playerDetails } : null;
+    })
+    .filter((p) => p !== null);
+
+  console.log(benchPlayers);
 
   if (players.length > 0 && lineup)
     return (
@@ -65,6 +61,17 @@ export const LineupOverview = ({
           <div className={styles.penaltyAreaLeft}></div>
           <div className={styles.penaltyAreaRight}></div>
         </div>
+
+        {benchPlayers.length > 0 && (
+          <div className={styles.bench}>
+            <p>Ławka</p>
+            {benchPlayers.map((player) => (
+              <div key={player?.id} className={styles.benchPlayer}>
+                {player?.surname}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     );
 

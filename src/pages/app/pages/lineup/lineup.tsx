@@ -17,6 +17,7 @@ export const Lineup = () => {
     isLoading,
     isError,
     isSuccess,
+    refetch: refetchLineups,
   } = useGetTeamLineupsQuery(selectedFunctionary?.teamId as number, {
     skip: !selectedFunctionary?.teamId,
   });
@@ -27,8 +28,17 @@ export const Lineup = () => {
   if (isError) return <div className={styles.container}>Wystąpił błąd</div>;
   if (!isSuccess || !lineups)
     return <div className={styles.container}>Brak wydarzeń</div>;
-  if (lineups.length === 0)
-    return <div className={styles.container}>Brak wydarzeń</div>;
+  if (lineups.length === 0) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.content}>
+          <LineupBuilder
+            refetchLineups={refetchLineups as unknown as () => Promise<void>}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -38,7 +48,11 @@ export const Lineup = () => {
 
       <div className={styles.content}>
         {!isAddingNew && <LineupList lineups={safeLineups} />}
-        {isAddingNew && <LineupBuilder />}
+        {isAddingNew && (
+          <LineupBuilder
+            refetchLineups={refetchLineups as unknown as () => Promise<void>}
+          />
+        )}
       </div>
     </div>
   );
