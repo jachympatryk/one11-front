@@ -62,6 +62,8 @@ export const Event = () => {
 
       {!isAttendanceListOpen && (
         <>
+          {event?.name && <h3>{event.name}</h3>}
+
           <div className={styles.eventDetails}>
             <div>
               <h3>{mapEventName(event?.event_type).toUpperCase()}</h3>

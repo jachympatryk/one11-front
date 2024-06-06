@@ -96,3 +96,12 @@
 
   bottom: 84px;
 }
+
+.modal {
+  max-width: unset;
+  width: 90%;
+
+  @media screen and (min-width: $breakpoint-sm) {
+    width: 800px;
+  }
+}

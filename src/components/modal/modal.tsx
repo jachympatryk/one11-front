@@ -7,6 +7,7 @@ interface ModalProps {
   onClose: () => void;
   children: React.ReactNode;
   title?: string;
+  className?: string;
 }
 
 export const ModalComponent: React.FC<ModalProps> = ({
@@ -14,6 +15,7 @@ export const ModalComponent: React.FC<ModalProps> = ({
   onClose,
   children,
   title,
+  className,
 }) => {
   const [showModal, setShowModal] = useState(isOpen);
   const [shouldRender, setShouldRender] = useState(isOpen);
@@ -47,7 +49,7 @@ export const ModalComponent: React.FC<ModalProps> = ({
   };
 
   const handleButtonClick = () => {
-    setShowModal(false); // Start closing animation
+    onClose();
   };
 
   const onAnimationEnd = () => {
@@ -59,12 +61,12 @@ export const ModalComponent: React.FC<ModalProps> = ({
   return shouldRender
     ? ReactDOM.createPortal(
         <div
-          className={`${styles.modalOverlay} ${showModal ? styles.fadeIn : styles.fadeOut}`}
+          className={` ${styles.modalOverlay} ${showModal ? styles.fadeIn : styles.fadeOut}`}
           onClick={handleOverlayClick}
           onAnimationEnd={onAnimationEnd}
         >
           <div
-            className={`${styles.modalContent} ${showModal ? styles.slideIn : styles.slideOut}`}
+            className={` ${styles.modalContent} ${showModal ? styles.slideIn : styles.slideOut} ${className ? className : ''}`}
             onClick={handleContentClick}
           >
             <div className={styles.header}>

@@ -22,11 +22,6 @@ export interface EventModel {
   locationId: number;
 }
 
-export type CreateEventModel = Omit<
-  EventModel,
-  'id' | 'attendances' | 'location'
->;
-
 export type EventType =
   | 'TRAINING'
   | 'MATCH'

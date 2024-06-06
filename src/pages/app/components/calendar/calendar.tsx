@@ -99,8 +99,10 @@ export const Calendar: React.FC<CalendarComponentProps> = ({
         <MdDownload />
       </button>
       <ModalComponent
+        className={styles.modal}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        title="Dodaj nowe wydarzenie"
       >
         <AddEvent closeModal={() => setIsModalOpen(false)} />
       </ModalComponent>

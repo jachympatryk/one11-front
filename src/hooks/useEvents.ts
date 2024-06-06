@@ -14,6 +14,7 @@ export const useTeamEvents = () => {
     isLoading: isEventsLoading,
     isError: isEventsError,
     isSuccess: isEventsSuccess,
+    refetch: refetchEvents,
   } = useGetTeamEventsQuery(teamId, {
     skip: !teamId,
   });
@@ -23,6 +24,7 @@ export const useTeamEvents = () => {
     isEventsLoading,
     isEventsError,
     isEventsSuccess,
+    refetchEvents,
   };
 };
 

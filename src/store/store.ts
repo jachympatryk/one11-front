@@ -6,6 +6,7 @@ import { teamApi } from '../services/team/teamApi.ts';
 import { lineupsApi } from '../services/lineups/lineupsApi.ts';
 import { conversationsApi } from '../services/conversations/conversationsApi.ts';
 import { messagesApi } from '../services/messagesApi/messagesApi.ts';
+import { locationsApi } from '../services/locations/locationsApi.ts';
 
 const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ const store = configureStore({
     [lineupsApi.reducerPath]: lineupsApi.reducer,
     [conversationsApi.reducerPath]: conversationsApi.reducer,
     [messagesApi.reducerPath]: messagesApi.reducer,
+    [locationsApi.reducerPath]: locationsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -24,7 +26,8 @@ const store = configureStore({
       teamApi.middleware,
       lineupsApi.middleware,
       conversationsApi.middleware,
-      messagesApi.middleware
+      messagesApi.middleware,
+      locationsApi.middleware
     ),
 });
 

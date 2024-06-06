@@ -1,120 +1,72 @@
-import { Formik, Form, Field } from 'formik';
-import * as Yup from 'yup';
-import { CreateEventModel, EventType } from '../../../../models/event.ts';
-import { useUser } from '../../../../hooks/userUser.ts';
-import { useCreateEventMutation } from '../../../../services/events/eventApi.ts';
-
-const EventSchema = Yup.object().shape({
-  name: Yup.string().required('Nazwa wydarzenia jest wymagana'),
-  event_type: Yup.string().required('Typ wydarzenia jest wymagany'),
-  created_by: Yup.string().required('Twórca wydarzenia jest wymagany'),
-  start_time: Yup.date().required('Czas rozpoczęcia jest wymagany').nullable(),
-  end_time: Yup.date().nullable(),
-  line_up: Yup.string().optional(),
-  opponent: Yup.string().optional(),
-  collection_time: Yup.date().nullable(),
-  own_transport: Yup.boolean().optional(),
-  description_before: Yup.string().optional(),
-  description_after: Yup.string().optional(),
-  teamId: Yup.number().required('ID drużyny jest wymagane'),
-});
+import { useState } from 'react';
+import styles from './add-event.module.scss';
+import { EventType } from '../../../../models/event.ts';
+import { MatchEventForm } from './forms/match-event-form/match-event-form.tsx';
+import { TrainingEventForm } from './forms/training-event-form/training-event-form.tsx';
+import { MeetingEventForm } from './forms/meeting-event-form/meeting-event-form.tsx';
+import { OtherEventForm } from './forms/other-event-form/other-event-form.tsx';
 
 export const AddEvent = ({ closeModal }: { closeModal: () => void }) => {
-  const { selectedFunctionary } = useUser();
+  const [selectedEventType, setSelectedEventType] = useState<EventType | ''>(
+    'MATCH'
+  );
 
-  const [createEvent, { isLoading, isError }] = useCreateEventMutation();
+  const handleEventTypeSelect = (eventType: EventType) => {
+    setSelectedEventType(eventType);
+  };
+
+  const renderEventForm = () => {
+    switch (selectedEventType) {
+      case 'MATCH':
+        return <MatchEventForm closeModal={closeModal} />;
+      case 'TRAINING':
+        return <TrainingEventForm closeModal={closeModal} />;
+      case 'MEETING':
+        return <MeetingEventForm closeModal={closeModal} />;
+      case 'OTHER':
+        return <OtherEventForm closeModal={closeModal} />;
+      default:
+        return null;
+    }
+  };
 
   return (
-    <div>
-      <p>Dodaj Nowe Wydarzenie</p>
-      <Formik
-        initialValues={{
-          name: '',
-          event_type: '' as EventType,
-          created_by: selectedFunctionary?.id.toString(),
-          start_time: '',
-          end_time: '',
-          line_up: '',
-          opponent: '',
-          collection_time: '',
-          own_transport: false,
-          description_before: '',
-          description_after: '',
-          teamId: selectedFunctionary?.teamId as number,
-        }}
-        validationSchema={EventSchema}
-        onSubmit={async (values, actions) => {
-          const formattedValues: CreateEventModel = {
-            ...values,
-            created_at: new Date(),
-            start_time: values.start_time
-              ? new Date(values.start_time)
-              : new Date(),
-            end_time: values.end_time ? new Date(values.end_time) : undefined,
-            collection_time: values.collection_time
-              ? new Date(values.collection_time)
-              : undefined,
-            event_type: values.event_type as EventType,
-            locationId: 1,
-            created_by: '1',
-          };
-
-          try {
-            await createEvent(formattedValues).unwrap();
-            closeModal();
-            actions.resetForm();
-          } catch (error) {
-            console.error('Error creating event:', error);
-          } finally {
-            actions.setSubmitting(false);
-          }
-        }}
-      >
-        {({ isSubmitting }) => (
-          <Form>
-            <Field name="name" type="text" placeholder="Nazwa wydarzenia" />
-            <Field name="event_type" as="select">
-              <option value="">Wybierz typ wydarzenia</option>
-              <option value="MATCH">Mecz</option>
-              <option value="TRAINING">Trening</option>
-              <option value="TOURNAMENT">Turniej</option>
-              <option value="MEETING">Spotkanie</option>
-              <option value="OTHER">Inne</option>
-            </Field>
-            <Field name="start_time" type="datetime-local" />
-            <Field name="end_time" type="datetime-local" />
-            <Field name="line_up" type="text" placeholder="Skład" optional />
-            <Field
-              name="opponent"
-              type="text"
-              placeholder="Przeciwnik"
-              optional
-            />
-
-            <Field name="collection_time" type="datetime-local" optional />
-
-            <Field name="own_transport" type="checkbox" optional />
-            <Field
-              name="description_before"
-              as="textarea"
-              placeholder="Opis przed"
-              optional
-            />
-            <Field
-              name="description_after"
-              as="textarea"
-              placeholder="Opis po"
-              optional
-            />
-
-            <button type="submit" disabled={isSubmitting || isLoading}>
-              Dodaj Wydarzenie
-            </button>
-
-            {isError && <p> Unknown error occurred</p>}
-          </Form>
-        )}
-      </Formik>
+    <div className={styles.container}>
+      <div className={styles.eventTypeButtons}>
+        <button
+          type="button"
+          data-type={selectedEventType === 'MATCH' ? 'MATCH' : undefined}
+          className={`${styles.button} ${selectedEventType === 'MATCH' ? styles.active : ''}`}
+          onClick={() => handleEventTypeSelect('MATCH')}
+        >
+          Mecz
+        </button>
+        <button
+          type="button"
+          data-type={selectedEventType === 'TRAINING' ? 'TRAINING' : undefined}
+          className={`${styles.button} ${selectedEventType === 'TRAINING' ? styles.active : ''}`}
+          onClick={() => handleEventTypeSelect('TRAINING')}
+        >
+          Trening
+        </button>
+        <button
+          type="button"
+          data-type={selectedEventType === 'MEETING' ? 'MEETING' : undefined}
+          className={`${styles.button} ${selectedEventType === 'MEETING' ? styles.active : ''}`}
+          onClick={() => handleEventTypeSelect('MEETING')}
+        >
+          Spotkanie
+        </button>
+        <button
+          type="button"
+          data-type={selectedEventType === 'OTHER' ? 'OTHER' : undefined}
+          className={`${styles.button} ${selectedEventType === 'OTHER' ? styles.active : ''}`}
+          onClick={() => handleEventTypeSelect('OTHER')}
+        >
+          Inne
+        </button>
+      </div>
+      {renderEventForm()}
     </div>
   );
 };

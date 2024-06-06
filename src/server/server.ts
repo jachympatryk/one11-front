@@ -52,6 +52,7 @@ interface FetchArgs {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
   body?: unknown;
   headers?: HeadersInit;
+  params?: Record<string, string | number>; // Zmieniamy typ wartości na string | number
 }
 
 interface FetchError {
@@ -59,12 +60,28 @@ interface FetchError {
   message: string;
 }
 
+const createQueryString = (params: Record<string, string | number>): string => {
+  const query = new URLSearchParams();
+  for (const key in params) {
+    if (Object.prototype.hasOwnProperty.call(params, key)) {
+      query.append(key, String(params[key])); // Konwertujemy wartość na string
+    }
+  }
+  return query.toString();
+};
+
 export const baseQuery: BaseQueryFn<FetchArgs, unknown, FetchError> = async (
   args
 ) => {
   const token = localStorage.getItem('token');
+
+  console.log(args);
+
+  const queryString = args.params ? `?${createQueryString(args.params)}` : '';
+  const urlWithParams = `${args.url}${queryString}`;
+
   try {
-    const data = await fetchFromBackend<unknown>(args.url, {
+    const data = await fetchFromBackend<unknown>(urlWithParams, {
       method: args.method,
       body: args.body,
       headers: {
