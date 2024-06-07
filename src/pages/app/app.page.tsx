@@ -36,8 +36,6 @@ export const AppPage = () => {
       const parsedData = JSON.parse(storedData);
       const userId = parsedData?.id;
 
-      console.log(parsedData);
-
       if (userId) {
         updateUserId(userId);
 

@@ -14,8 +14,6 @@ export const LineupOverview = ({
     (_, index) => `pos-${index + 1}`
   );
 
-  console.log(lineup);
-
   const benchPlayers = lineup.players
     .filter((p) => p.playerPosition === 'pos-0')
     .map((benchPlayer) => {
@@ -23,8 +21,6 @@ export const LineupOverview = ({
       return playerDetails ? { ...benchPlayer, ...playerDetails } : null;
     })
     .filter((p) => p !== null);
-
-  console.log(benchPlayers);
 
   if (players.length > 0 && lineup)
     return (

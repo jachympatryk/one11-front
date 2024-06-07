@@ -23,7 +23,6 @@ interface EventsByMonth {
 
 interface EventsListProps {
   currentMonth: Date;
-  setCurrentMonth: React.Dispatch<React.SetStateAction<Date>>;
   isCurrentWeek?: boolean;
   isNextWeek?: boolean;
   events: EventModel[];

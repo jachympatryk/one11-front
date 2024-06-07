@@ -44,7 +44,10 @@ export const Event = () => {
     setIsAttendanceListOpen((prevState) => !prevState);
   };
 
+  console.log(event);
+
   const isMatchEvent = event.event_type === 'MATCH';
+  const showDetails = event?.own_transport || event?.collection_time;
 
   return (
     <div className={styles.container}>
@@ -100,10 +103,28 @@ export const Event = () => {
             </div>
           )}
 
-          {isMatchEvent && event?.lineup && (
+          {event?.lineup && (
             <div className={styles.lineup}>
               <h2>Skład</h2>
               <LineupOverview lineup={event.lineup} players={players} />
+            </div>
+          )}
+
+          {showDetails && (
+            <div className={styles.details}>
+              {event?.collection_time && (
+                <div className={styles.collectionTime}>
+                  <h2>Godzina zbiórki</h2>
+                  <p>{formatTime(new Date(event.collection_time))}</p>
+                </div>
+              )}
+
+              {event?.own_transport && (
+                <div className={styles.ownTransport}>
+                  <h2>Transport</h2>
+                  <p>Własny</p>
+                </div>
+              )}
             </div>
           )}
         </>

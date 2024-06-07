@@ -111,12 +111,7 @@ export const MatchEventForm = ({ closeModal }: { closeModal: () => void }) => {
 
           <div className={styles.fieldWrapper}>
             <label htmlFor="locationId">Lokalizacja</label>
-            <Field
-              as="select"
-              name="locationId"
-              required
-              className={styles.select}
-            >
+            <Field as="select" name="locationId" className={styles.select}>
               <option value="">Wybierz lokalizację</option>
               {locations?.map((location) => (
                 <option key={location.id} value={location.id}>

@@ -10,6 +10,10 @@
   max-width: 1200px;
   margin: auto;
 
+  h3 {
+    font-size: 32px;
+  }
+
   @media screen and (min-width: $breakpoint-sm) {
     padding: 64px;
   }
@@ -142,6 +146,15 @@ padding: 0;
   flex-direction: column;
   gap: 16px;
   height: 800px;
+}
+
+.details {
+  @extend  .eventBox;
+
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  min-height: 130px;
 }
 
 .player {

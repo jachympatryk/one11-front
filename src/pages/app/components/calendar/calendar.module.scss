@@ -94,6 +94,12 @@
 .floatingButtonCsv {
   @extend  .floatingButton;
 
+  bottom: 151px;
+}
+
+.floatingButtonToday {
+  @extend  .floatingButton;
+
   bottom: 84px;
 }
 

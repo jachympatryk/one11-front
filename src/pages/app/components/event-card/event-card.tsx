@@ -6,8 +6,6 @@ import styles from './event-card.module.scss';
 import { MdAddLocation } from 'react-icons/md';
 
 export const EventCard = ({ event }: { event: EventModel }) => {
-  console.log(event);
-
   const formatTime = (dateString: Date) => format(dateString, 'HH:mm');
 
   const eventStartTime = formatTime(event?.start_time);

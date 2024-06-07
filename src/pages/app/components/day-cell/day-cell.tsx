@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { format } from 'date-fns';
+import { format, isSameDay, isSameMonth } from 'date-fns';
 import styles from './day-cell.module.scss';
 import { useEffect, useState } from 'react';
 import { EventModel } from '../../../../models/event.ts';
@@ -7,32 +7,39 @@ import { EventModel } from '../../../../models/event.ts';
 export const DayCell = ({
   day,
   events,
+  currentDate,
 }: {
   day: Date;
   events: EventModel[];
+  currentDate: Date;
 }) => {
-  const [isEventDay, setIsEventDay] = useState(false);
-  const navigate = useNavigate(); // Używamy useNavigate zamiast useHistory
+  const [isEventDay, setIsEventDay] = useState(events.length > 0);
+  const navigate = useNavigate();
 
   const handleClick = () => {
     if (isEventDay && events.length > 0) {
-      // Przenosi do strony pierwszego wydarzenia; możesz zmienić logikę wyboru wydarzenia
       navigate(`/app/event/${events[0].id}`);
     }
   };
+
+  const isToday = isSameDay(day, new Date());
+  const isCurrentMonth = isSameMonth(day, currentDate);
 
   useEffect(() => {
     setIsEventDay(events.length > 0);
   }, [events]);
 
   return (
-    <div onClick={handleClick} className={styles.container}>
+    <div
+      onClick={handleClick}
+      className={`${styles.container} ${!isCurrentMonth ? styles.outsideMonth : ''} ${isToday ? styles.isToday : ''} `}
+    >
       <p>{format(day, 'd')}</p>
       <div className={styles.cellWrapper}>
         {events.map((event) => (
           <div
             className={styles.cell}
-            data-type={event.event_type} // Prawidłowe użycie atrybutu 'data-type'
+            data-type={event.event_type}
             key={event.id}
           ></div>
         ))}

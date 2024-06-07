@@ -8,7 +8,6 @@ import {
   addMonths,
   isSameDay,
 } from 'date-fns';
-import Papa from 'papaparse';
 import styles from './calendar.module.scss';
 import { DayCell } from '../day-cell/day-cell.tsx';
 import { monthNames } from '../../../../constants/data.ts';
@@ -21,81 +20,66 @@ import {
   MdDownload,
 } from 'react-icons/md';
 import { EventModel } from '../../../../models/event.ts';
+import { handleCsvExport } from './calendar.constants.ts';
+import { IoToday } from 'react-icons/io5';
 
 interface CalendarComponentProps {
-  currentMonth: Date;
-  setCurrentMonth: React.Dispatch<React.SetStateAction<Date>>;
+  currentDate: Date;
+  setCurrentDateInParams: (date: Date) => void;
   events: EventModel[];
 }
 
 export const Calendar: React.FC<CalendarComponentProps> = ({
-  currentMonth,
-  setCurrentMonth,
+  currentDate,
+  setCurrentDateInParams,
   events,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const startDay = startOfWeek(startOfMonth(currentMonth), { weekStartsOn: 1 });
-  const endDay = endOfWeek(endOfMonth(currentMonth), { weekStartsOn: 1 });
-  const days = useMemo(
-    () => eachDayOfInterval({ start: startDay, end: endDay }),
-    [startDay, endDay]
-  );
+  const startDay = startOfMonth(currentDate);
+  const endDay = endOfMonth(currentDate);
+
+  const days = useMemo(() => {
+    const start = startOfWeek(startDay, { weekStartsOn: 1 });
+    const end = endOfWeek(endDay, { weekStartsOn: 1 });
+    return eachDayOfInterval({ start, end });
+  }, [startDay, endDay]);
 
   const eventsForDay = useMemo(
     () => (day: Date) => {
-      return (
-        events?.filter((event) => isSameDay(new Date(event.start_time), day)) ||
-        []
+      return events.filter((event) =>
+        isSameDay(new Date(event.start_time), day)
       );
     },
     [events]
   );
 
-  const handleCsvExport = () => {
-    if (!events) return;
-    const filteredEvents = events.filter((event) => {
-      const eventDate = new Date(event.start_time);
-      return eventDate >= startDay && eventDate <= endDay;
-    });
+  const monthName = monthNames[startDay.getMonth() + 1];
 
-    const csvData = filteredEvents.map((event) => ({
-      ID: event.id,
-      Name: event.name,
-      Event_Type: event.event_type,
-      Start_Time: event.start_time,
-      End_Time: event.end_time,
-      Created_At: event.created_at,
-      Created_By: event.created_by,
-    }));
-
-    const csv = Papa.unparse(csvData, { quotes: true, delimiter: ';' });
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute(
-      'download',
-      `${monthNames[currentMonth.getMonth()]}-${currentMonth.getFullYear()}-events.csv`
-    );
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  };
-
-  const monthName = monthNames[currentMonth.getMonth()];
-  const year = currentMonth.getFullYear();
+  const year = currentDate.getFullYear();
 
   return (
     <div className={styles.container}>
+      <button
+        onClick={() => setCurrentDateInParams(new Date())}
+        className={styles.floatingButtonToday}
+      >
+        <IoToday />
+      </button>
+
       <button
         onClick={() => setIsModalOpen(true)}
         className={styles.floatingButton}
       >
         <MdAdd />
       </button>
-      <button onClick={handleCsvExport} className={styles.floatingButtonCsv}>
+
+      <button
+        onClick={() =>
+          handleCsvExport({ currentDate, endDay, events, startDay })
+        }
+        className={styles.floatingButtonCsv}
+      >
         <MdDownload />
       </button>
       <ModalComponent
@@ -106,21 +90,23 @@ export const Calendar: React.FC<CalendarComponentProps> = ({
       >
         <AddEvent closeModal={() => setIsModalOpen(false)} />
       </ModalComponent>
+
       <div className={styles.calendarHeader}>
         <button
           className={styles.button}
-          onClick={() => setCurrentMonth(addMonths(currentMonth, -1))}
+          onClick={() => setCurrentDateInParams(addMonths(currentDate, -1))}
         >
           <MdNavigateBefore />
         </button>
         <div>{`${monthName} ${year}`}</div>
         <button
           className={styles.button}
-          onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
+          onClick={() => setCurrentDateInParams(addMonths(currentDate, 1))}
         >
           <MdNavigateNext />
         </button>
       </div>
+
       <div className={styles.daysLegend}>
         {['Pon', 'Wt', 'Śr', 'Czw', 'Pt', 'Sob', 'Niedz'].map((dayName) => (
           <div
@@ -137,6 +123,7 @@ export const Calendar: React.FC<CalendarComponentProps> = ({
             key={day.toISOString()}
             day={day}
             events={eventsForDay(day)}
+            currentDate={currentDate}
           />
         ))}
       </div>
