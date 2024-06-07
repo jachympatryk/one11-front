@@ -9,7 +9,7 @@ export const Dashboard = () => {
   const { isEventsSuccess, isEventsLoading, events, isEventsError } =
     useTeamEvents();
 
-  const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
+  const [currentMonth] = useState<Date>(new Date());
 
   if (isEventsLoading) return <Loader />;
   if (isEventsError)
@@ -26,12 +26,7 @@ export const Dashboard = () => {
         <FutureMatch gameInTurn={2} events={events} />
       </div>
 
-      <EventsList
-        events={events}
-        currentMonth={currentMonth}
-        setCurrentMonth={setCurrentMonth}
-        isCurrentWeek
-      />
+      <EventsList events={events} currentMonth={currentMonth} isCurrentWeek />
     </div>
   );
 };
