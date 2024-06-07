@@ -15,8 +15,6 @@ export const UserFunctionalitySelect = () => {
   const { userId, updateSelectedFunctionary } = useUser();
   const dispatch = useDispatch();
 
-  console.log(userId);
-
   const {
     data: functionaries,
     isSuccess: isFunctionariesSuccess,
@@ -48,6 +46,14 @@ export const UserFunctionalitySelect = () => {
       JSON.stringify(functionality)
     );
   };
+
+  useEffect(() => {
+    if (isPlayersSuccess && players?.length === 1) {
+      handleOnClick(players[0].player);
+    } else if (isFunctionariesSuccess && functionaries?.length === 1) {
+      handleOnClick(functionaries[0].functionary);
+    }
+  }, [isPlayersSuccess, players, isFunctionariesSuccess, functionaries]);
 
   const fetchingSuccess = isFunctionariesSuccess && isPlayersSuccess;
 
