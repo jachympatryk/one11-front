@@ -3,8 +3,6 @@
   width: 100%;
   height: 100%;
   border-radius: 8px;
-  display: flex;
-  flex-direction: column;
   cursor: pointer;
   padding-top: 4px;
 }
@@ -31,4 +29,16 @@
 
 .isToday {
   border: 1px solid #4253ac;
+}
+
+.eventDayContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.emptyCell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

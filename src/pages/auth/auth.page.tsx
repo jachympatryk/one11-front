@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLoginUserMutation } from '../../services/user/userApi';
+import styles from './auth.module.scss';
 
 export const AuthPage = () => {
   const [email, setEmail] = useState('');
@@ -24,23 +25,37 @@ export const AuthPage = () => {
   };
 
   return (
-    <div>
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-      />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-      />
-      <button onClick={handleLogin} disabled={isLoading}>
-        Log In
-      </button>
-      {error && <p style={{ color: 'red' }}>Error during login</p>}
+    <div className={styles.container}>
+      <div className={styles.content}>
+        <div className={styles.fieldWrapper}>
+          <label className={styles.label}>Email</label>
+          <input
+            className={styles.input}
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+          />
+        </div>
+        <div className={styles.fieldWrapper}>
+          <label className={styles.label}>Hasło</label>
+          <input
+            className={styles.input}
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Hasło"
+          />
+        </div>
+        <button
+          className={styles.submitButton}
+          onClick={handleLogin}
+          disabled={isLoading}
+        >
+          Zaloguj się
+        </button>
+        {error && <p className={styles.error}>Błąd podczas logowania</p>}
+      </div>
     </div>
   );
 };

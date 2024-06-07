@@ -32,18 +32,20 @@ export const DayCell = ({
   return (
     <div
       onClick={handleClick}
-      className={`${styles.container} ${!isCurrentMonth ? styles.outsideMonth : ''} ${isToday ? styles.isToday : ''} `}
+      className={`${styles.container} ${!isCurrentMonth ? styles.outsideMonth : ''} ${isToday ? styles.isToday : ''}  ${isEventDay ? styles.eventDayContainer : styles.emptyCell} `}
     >
       <p>{format(day, 'd')}</p>
-      <div className={styles.cellWrapper}>
-        {events.map((event) => (
-          <div
-            className={styles.cell}
-            data-type={event.event_type}
-            key={event.id}
-          ></div>
-        ))}
-      </div>
+      {isEventDay && (
+        <div className={styles.cellWrapper}>
+          {events.map((event) => (
+            <div
+              className={styles.cell}
+              data-type={event.event_type}
+              key={event.id}
+            ></div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
