@@ -57,3 +57,9 @@ tbody tr:nth-child(odd) {
   -moz-box-shadow: 12px 12px 13px -9px rgba(31, 31, 32, 1);
   box-shadow: 12px 12px 13px -9px rgba(31, 31, 32, 1);
 }
+
+.highlighted {
+  font-weight: bold !important;
+  background-color: #4253ac !important;
+  border-radius: 8px !important;
+}

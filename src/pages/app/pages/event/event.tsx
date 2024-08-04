@@ -44,8 +44,6 @@ export const Event = () => {
     setIsAttendanceListOpen((prevState) => !prevState);
   };
 
-  console.log(event);
-
   const isMatchEvent = event.event_type === 'MATCH';
   const showDetails = event?.own_transport || event?.collection_time;
 

@@ -2,28 +2,10 @@ import styles from './table.module.scss';
 import { TableModel } from '../../../../models/table.ts';
 
 export const Table = ({ table }: { table: TableModel[] }) => {
-  // const downloadImage = async () => {
-  //   const tableElement = document.querySelector(
-  //     `.${styles.container} table`
-  //   ) as HTMLElement;
-  //   if (tableElement) {
-  //     const canvas = await html2canvas(tableElement);
-  //     const image = canvas
-  //       .toDataURL('image/png')
-  //       .replace('image/png', 'image/octet-stream');
-  //     const link = document.createElement('a');
-  //     link.download = 'table_snapshot.png'; // Nazwa pliku do pobrania
-  //     link.href = image;
-  //     link.click();
-  //   }
-  // };
+  const teamName = 'Ks Nowa Jastrząbka-Żukowice';
 
   return (
     <div className={styles.container}>
-      {/*<button onClick={downloadImage} className={styles.floatingButton}>*/}
-      {/*  <MdDownload />*/}
-      {/*</button>*/}
-
       <table>
         <thead>
           <tr>
@@ -39,7 +21,14 @@ export const Table = ({ table }: { table: TableModel[] }) => {
         </thead>
         <tbody>
           {table?.map((team) => (
-            <tr key={team.rank}>
+            <tr
+              key={team.rank}
+              className={
+                team.name.toLowerCase() === teamName.toLowerCase()
+                  ? styles.highlighted
+                  : ''
+              }
+            >
               <td>{team.rank}</td>
               <td>{team.name}</td>
               <td>{team.matches}</td>
