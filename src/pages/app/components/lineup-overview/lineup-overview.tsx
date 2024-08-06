@@ -71,5 +71,5 @@ export const LineupOverview = ({
       </div>
     );
 
-  return <div>Ładownie</div>;
+  return <div>Ładownie...</div>;
 };

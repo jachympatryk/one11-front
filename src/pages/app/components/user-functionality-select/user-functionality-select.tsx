@@ -38,7 +38,9 @@ export const UserFunctionalitySelect = () => {
     updateSelectedFunctionary(functionality);
 
     if ('position' in functionality) {
-      dispatch(setIsUserPlayer(!!functionality.position));
+      dispatch(setIsUserPlayer(true));
+    } else {
+      dispatch(setIsUserPlayer(false));
     }
 
     localStorage.setItem(

@@ -7,8 +7,11 @@ import { IoIosSettings } from 'react-icons/io';
 import { ModalComponent } from '../../../../components/modal/modal.tsx';
 import { useEffect, useState } from 'react';
 import { UserFunctionalitySelect } from '../user-functionality-select/user-functionality-select.tsx';
+import { useUser } from '../../../../hooks/userUser.ts';
 
 export const SideMenu = () => {
+  const { isUserPlayer } = useUser();
+
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
@@ -56,12 +59,14 @@ export const SideMenu = () => {
         >
           <FiMessageSquare />
         </NavLink>
-        <NavLink
-          to="/app/lineup"
-          className={({ isActive }) => (isActive ? styles.activeLink : '')}
-        >
-          <IoFootballSharp />
-        </NavLink>
+        {!isUserPlayer && (
+          <NavLink
+            to="/app/lineup"
+            className={({ isActive }) => (isActive ? styles.activeLink : '')}
+          >
+            <IoFootballSharp />
+          </NavLink>
+        )}
       </div>
 
       <div className={styles.settings}>
