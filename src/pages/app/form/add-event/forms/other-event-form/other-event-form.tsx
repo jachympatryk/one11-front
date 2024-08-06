@@ -1,16 +1,30 @@
 import { Formik, Form, Field } from 'formik';
-import { useCreateEventMutation } from '../../../../../../services/events/eventApi.ts';
-import { EventType } from '../../../../../../models/event.ts';
+import {
+  useCreateEventMutation,
+  useUpdateEventMutation,
+} from '../../../../../../services/events/eventApi.ts';
+import { EventModel, EventType } from '../../../../../../models/event.ts';
 import { useGetLocationsByClubIdQuery } from '../../../../../../services/locations/locationsApi.ts';
 import { useGetTeamLineupsQuery } from '../../../../../../services/team/teamApi.ts';
 import { useUser } from '../../../../../../hooks/userUser.ts';
 import { useTeamEvents } from '../../../../../../hooks/useEvents.ts';
 import styles from '../match-event-form/match-event-form.module.scss';
+import { useConditionalEventRefetch } from '../../add-event.contstants.ts';
 
-export const OtherEventForm = ({ closeModal }: { closeModal: () => void }) => {
-  const [createEvent, { isLoading, isError }] = useCreateEventMutation();
+export const OtherEventForm = ({
+  closeModal,
+  eventToEdit,
+}: {
+  closeModal: () => void;
+  eventToEdit?: EventModel;
+}) => {
+  const [createEvent, { isLoading: isCreating, isError: isCreateError }] =
+    useCreateEventMutation();
+  const [updateEvent, { isLoading: isUpdating, isError: isUpdateError }] =
+    useUpdateEventMutation();
   const { selectedFunctionary } = useUser();
   const { refetchEvents } = useTeamEvents();
+  const { refetchEvent } = useConditionalEventRefetch(eventToEdit);
 
   const { data: locations } = useGetLocationsByClubIdQuery(1);
   const { data: lineups } = useGetTeamLineupsQuery(
@@ -20,19 +34,28 @@ export const OtherEventForm = ({ closeModal }: { closeModal: () => void }) => {
     }
   );
 
+  const initialValues = {
+    name: eventToEdit?.name || '',
+    event_type: 'OTHER',
+    start_time: eventToEdit?.start_time
+      ? new Date(eventToEdit.start_time).toISOString().slice(0, 16)
+      : '',
+    end_time: eventToEdit?.end_time
+      ? new Date(eventToEdit.end_time).toISOString().slice(0, 16)
+      : '',
+    lineupId: eventToEdit?.lineupId?.toString() || '',
+    collection_time: eventToEdit?.collection_time
+      ? new Date(eventToEdit.collection_time).toISOString().slice(0, 16)
+      : '',
+    own_transport: eventToEdit?.own_transport || false,
+
+    description_before: eventToEdit?.description_before || '',
+    locationId: eventToEdit?.locationId?.toString() || '',
+  };
+
   return (
     <Formik
-      initialValues={{
-        name: '',
-        event_type: 'OTHER',
-        start_time: '',
-        end_time: '',
-        lineupId: '',
-        collection_time: '',
-        own_transport: false,
-        description_before: '',
-        locationId: '',
-      }}
+      initialValues={initialValues}
       // validationSchema={otherSchema} // Ensure you create and import this schema
       onSubmit={async (values, actions) => {
         const formattedValues = {
@@ -52,13 +75,21 @@ export const OtherEventForm = ({ closeModal }: { closeModal: () => void }) => {
         };
 
         try {
-          await createEvent(formattedValues).unwrap();
+          if (eventToEdit) {
+            await updateEvent({
+              eventId: eventToEdit.id,
+              updateData: formattedValues,
+            }).unwrap();
+          } else {
+            await createEvent(formattedValues).unwrap();
+          }
           closeModal();
           actions.resetForm();
           await refetchEvents();
         } catch (error) {
-          console.error('Error creating event:', error);
+          console.error('Error submitting event:', error);
         } finally {
+          if (refetchEvent) refetchEvent();
           actions.setSubmitting(false);
         }
       }}
@@ -148,15 +179,15 @@ export const OtherEventForm = ({ closeModal }: { closeModal: () => void }) => {
 
           <button
             type="submit"
-            disabled={isSubmitting || isLoading}
+            disabled={isSubmitting || isCreating || isUpdating}
             className={styles.submitButton}
           >
-            Dodaj Wydarzenie
+            {eventToEdit ? 'Zaktualizuj Wydarzenie' : 'Dodaj Wydarzenie'}
           </button>
 
-          {isError && (
+          {(isCreateError || isUpdateError) && (
             <p className={styles.error}>
-              Wystąpił błąd przy tworzeniu wydarzenia
+              Wystąpił błąd podczas zapisywania wydarzenia
             </p>
           )}
         </Form>

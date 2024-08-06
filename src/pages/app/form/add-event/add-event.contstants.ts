@@ -1,4 +1,6 @@
 import * as Yup from 'yup';
+import { EventModel } from '../../../../models/event.ts';
+import { useGetEventQuery } from '../../../../services/events/eventApi.ts';
 
 export const EventSchema = Yup.object().shape({
   name: Yup.string().required('Nazwa wydarzenia jest wymagana'),
@@ -14,3 +16,18 @@ export const EventSchema = Yup.object().shape({
   description_after: Yup.string().optional(),
   teamId: Yup.number().required('ID drużyny jest wymagane'),
 });
+
+export const useConditionalEventRefetch = (
+  eventToEdit: EventModel | undefined
+) => {
+  let refetchEvent;
+
+  if (eventToEdit?.id) {
+    const queryResult = useGetEventQuery(eventToEdit.id);
+    refetchEvent = queryResult.refetch;
+  }
+
+  return {
+    refetchEvent,
+  };
+};

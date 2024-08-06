@@ -4,13 +4,17 @@ import styles from './event.module.scss';
 import { mapEventName } from '../../../../utils/mapEventName.ts';
 import { format } from 'date-fns';
 import { pl } from 'date-fns/locale';
-import { MdAddLocation } from 'react-icons/md';
+import { MdAddLocation, MdModeEdit } from 'react-icons/md';
 import { RiFileListLine } from 'react-icons/ri';
+
 import { AttendanceList } from '../../components/attendance-list/attendance-list.tsx';
 import { LineupOverview } from '../../components/lineup-overview/lineup-overview.tsx';
 import { Loader } from '../../components/loader/loader.tsx';
 import { useEvent } from '../../../../hooks/useEvents.ts';
 import { useTeamPlayers } from '../../../../hooks/usePlayers.ts';
+import { ModalComponent } from '../../../../components/modal/modal.tsx';
+import { AddEvent } from '../../form/add-event/add-event.tsx';
+import { useUser } from '../../../../hooks/userUser.ts';
 
 export const Event = () => {
   const { eventId } = useParams<{ eventId: string }>();
@@ -19,8 +23,10 @@ export const Event = () => {
   const { event, isEventLoading, isEventSuccess, refetchEvent } =
     useEvent(eventNumber);
   const { playersSuccess, players, playersLoading } = useTeamPlayers();
+  const { isUserPlayer } = useUser();
 
   const [isAttendanceListOpen, setIsAttendanceListOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (isEventLoading || playersLoading) return <Loader />;
   if (!event || !players || !playersSuccess || !isEventSuccess)
@@ -52,6 +58,14 @@ export const Event = () => {
       <button onClick={handleAttendanceList} className={styles.floatingButton}>
         <RiFileListLine />
       </button>
+      {!isUserPlayer && (
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className={styles.floatingButtonEdit}
+        >
+          <MdModeEdit />
+        </button>
+      )}
 
       {isAttendanceListOpen && (
         <AttendanceList
@@ -127,6 +141,18 @@ export const Event = () => {
           )}
         </>
       )}
+
+      <ModalComponent
+        className={styles.modal}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Edytuj wydarzenie"
+      >
+        <AddEvent
+          closeModal={() => setIsModalOpen(false)}
+          eventToEdit={event}
+        />
+      </ModalComponent>
     </div>
   );
 };

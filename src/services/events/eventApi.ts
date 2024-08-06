@@ -22,6 +22,14 @@ export const eventsApi = createApi({
       }),
     }),
 
+    updateEvent: builder.mutation({
+      query: ({ eventId, updateData }) => ({
+        url: `events/${eventId}`,
+        method: 'PUT',
+        body: updateData,
+      }),
+    }),
+
     getEvent: builder.query<EventModel, number>({
       query: (eventId) => ({
         url: `events/${eventId}`,
@@ -39,6 +47,7 @@ export const eventsApi = createApi({
 export const {
   useCreateEventMutation,
   useUpdateAttendanceStatusMutation,
+  useUpdateEventMutation, // Nowa mutacja
   useGetEventQuery,
   useGetTeamEventsQuery,
 } = eventsApi;

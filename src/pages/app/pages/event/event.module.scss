@@ -181,3 +181,9 @@ padding: 0;
   -moz-box-shadow: 12px 12px 13px -9px rgba(31, 31, 32, 1);
   box-shadow: 12px 12px 13px -9px rgba(31, 31, 32, 1);
 }
+
+.floatingButtonEdit {
+  @extend .floatingButton;
+
+  bottom: 84px;
+}

@@ -1,32 +1,49 @@
 import { Formik, Form, Field } from 'formik';
-import { useCreateEventMutation } from '../../../../../../services/events/eventApi.ts';
-import { EventType } from '../../../../../../models/event.ts';
+import {
+  useCreateEventMutation,
+  useUpdateEventMutation,
+} from '../../../../../../services/events/eventApi.ts';
+import { EventModel, EventType } from '../../../../../../models/event.ts';
 import { useGetLocationsByClubIdQuery } from '../../../../../../services/locations/locationsApi.ts';
 import { useUser } from '../../../../../../hooks/userUser.ts';
 import { useTeamEvents } from '../../../../../../hooks/useEvents.ts';
 import styles from '../match-event-form/match-event-form.module.scss';
+import { useConditionalEventRefetch } from '../../add-event.contstants.ts';
 
 export const MeetingEventForm = ({
   closeModal,
+  eventToEdit,
 }: {
   closeModal: () => void;
+  eventToEdit?: EventModel;
 }) => {
-  const [createEvent, { isLoading, isError }] = useCreateEventMutation();
+  const [createEvent, { isLoading: isCreating, isError: isCreateError }] =
+    useCreateEventMutation();
+  const [updateEvent, { isLoading: isUpdating, isError: isUpdateError }] =
+    useUpdateEventMutation();
   const { selectedFunctionary } = useUser();
   const { refetchEvents } = useTeamEvents();
+  const { refetchEvent } = useConditionalEventRefetch(eventToEdit);
 
+  // TODO: location fetching
   const { data: locations } = useGetLocationsByClubIdQuery(1);
+
+  const initialValues = {
+    name: eventToEdit?.name || '',
+    event_type: 'MEETING',
+    start_time: eventToEdit?.start_time
+      ? new Date(eventToEdit.start_time).toISOString().slice(0, 16)
+      : '',
+    end_time: eventToEdit?.end_time
+      ? new Date(eventToEdit.end_time).toISOString().slice(0, 16)
+      : '',
+    description_before: eventToEdit?.description_before || '',
+    locationId: eventToEdit?.locationId?.toString() || '',
+  };
 
   return (
     <Formik
-      initialValues={{
-        name: '',
-        event_type: 'MEETING',
-        start_time: '',
-        end_time: '',
-        description_before: '',
-        locationId: '',
-      }}
+      initialValues={initialValues}
       // validationSchema={meetingSchema}
       onSubmit={async (values, actions) => {
         const formattedValues = {
@@ -42,13 +59,21 @@ export const MeetingEventForm = ({
         };
 
         try {
-          await createEvent(formattedValues).unwrap();
+          if (eventToEdit) {
+            await updateEvent({
+              eventId: eventToEdit.id,
+              updateData: formattedValues,
+            }).unwrap();
+          } else {
+            await createEvent(formattedValues).unwrap();
+          }
           closeModal();
           actions.resetForm();
           await refetchEvents();
         } catch (error) {
-          console.error('Error creating event:', error);
+          console.error('Error submitting event:', error);
         } finally {
+          if (refetchEvent) refetchEvent();
           actions.setSubmitting(false);
         }
       }}
@@ -108,15 +133,15 @@ export const MeetingEventForm = ({
 
           <button
             type="submit"
-            disabled={isSubmitting || isLoading}
+            disabled={isSubmitting || isCreating || isUpdating}
             className={styles.submitButton}
           >
-            Dodaj Wydarzenie
+            {eventToEdit ? 'Zaktualizuj Wydarzenie' : 'Dodaj Wydarzenie'}
           </button>
 
-          {isError && (
+          {(isCreateError || isUpdateError) && (
             <p className={styles.error}>
-              Wystąpił błąd przy tworzeniu wydarzenia
+              Wystąpił błąd podczas zapisywania wydarzenia
             </p>
           )}
         </Form>
